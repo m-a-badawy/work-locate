@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import ownerSchema from '../model/owner.js';
 
 const workingSpaceSchema = new mongoose.Schema({
   name: {
@@ -37,9 +36,8 @@ const workingSpaceSchema = new mongoose.Schema({
   },
   rating: {
     type: Number,
-    min: 0,
+    min: 1,
     max: 5,
-    default: 0,
   },
   amenities: {
     type: [String],
@@ -47,10 +45,19 @@ const workingSpaceSchema = new mongoose.Schema({
   },
   roomCounter: {
     type: Number,
-    required: [true, 'Room counter is required'],
+    required: true,
     default: 0
   },
-  owner: ownerSchema
+  ownerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true
+  },
+  reviews: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Review', 
+    required: true,
+}]
 },{timestamps: true,});
 
 const workingSpaceModel = mongoose.model('WorkingSpace', workingSpaceSchema);

@@ -1,0 +1,8 @@
+{
+    "email": {
+        "user": "EMAIL_USER",
+        "password": "EMAIL_PASSWORD",
+        "service": "EMAIL_SERVICE"
+    },
+    "jwtPrivateKey": "JWT_PRIVATE_KEY"
+}

@@ -28,6 +28,6 @@ export const pricingPolicySchema = new mongoose.Schema({
         ref: 'Workspace',
         required: true
     }
-});
+}, { timestamps: true });
 
 export const pricingModel = mongoose.model('Pricing', pricingPolicySchema);

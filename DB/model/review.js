@@ -31,7 +31,7 @@ const reviewSchema = new mongoose.Schema({
         ref: 'Workspace',
         required: true
     }
-});
+}, { timestamps: true });
 
 const reviewModel = mongoose.model('Review', reviewSchema);
 

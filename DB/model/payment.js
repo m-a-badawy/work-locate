@@ -37,7 +37,7 @@ const paymentSchema = new mongoose.Schema({
         ref: 'Reservation',
         required: true
     }
-});
+}, { timestamps: true });
 
 const paymentModel = mongoose.model('Payment', paymentSchema);
 
