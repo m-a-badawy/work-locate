@@ -37,7 +37,7 @@ export async function createReservation(req, res) {
         console.log(populatedReservation);
 
         room.availableSeats -= seatsBooked;
-        if (room.availableSeats === 0) room.availabilityStatus = 'full';
+        if (room.availableSeats === 0) room.availabilityStatus = 'unavailable';
         await room.save();
 
         return res.status(201).json({
