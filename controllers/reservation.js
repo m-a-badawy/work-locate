@@ -16,7 +16,7 @@ export async function createReservation(req, res) {
 
         if (room.availabilityStatus !== 'available') return res.status(400).json({ success: false, message: 'Room is not available for booking.' });
 
-        if (room.availableSeats < seatsBooked) return res.status(400).json({ success: false, message: 'Not enough available seats.' });
+        if (room.availableSeats < seatsBooked) return res.status(400).json({ success: false, message: 'No enough available seats.' });
 
         const now = new Date();
         const expectedArrivalTime = new Date(now.getTime() + minutesToArrive * 60000);
