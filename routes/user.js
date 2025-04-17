@@ -87,12 +87,6 @@ router.put(
 );
 
 router.delete(
-    '/delete-profile',
-    isAuth,
-    deactivateAccount
-);
-
-router.delete(
     '/deactivate-profile',
     isAuth,
     deactivateAccount
