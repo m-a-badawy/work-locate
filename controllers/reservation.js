@@ -32,19 +32,13 @@ export async function createReservation(req, res) {
 
         const populatedReservation = await reservationModel.findById(reservation._id)
             .populate('roomId','name pricePerHour type capacity')
-            .populate('customerId','firstName lastName');
-
-        console.log(populatedReservation);
+            .populate('customerId','-_id firstName lastName');
 
         room.availableSeats -= seatsBooked;
         if (room.availableSeats === 0) room.availabilityStatus = 'unavailable';
         await room.save();
 
-        return res.status(201).json({
-            success: true,
-            message: 'Reservation request submitted successfully.',
-            populatedReservation
-        });
+        return res.status(201).json({ success: true,message: 'Reservation request submitted successfully.', populatedReservation });
 
     } catch (error) {
         return res.status(500).json({ success: false, message: error.message });
