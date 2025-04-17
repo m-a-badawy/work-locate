@@ -7,33 +7,47 @@ import { reservationModel } from '../DB/model/reservation.js';
 export async function createReservation(req, res) {
     try {
         const { seatsBooked, minutesToArrive } = req.body;
-        
+
         const user = await userModel.findById(req.user._id);
-        if (!user) return res.status(404).send('User not found.');
-        
+        if (!user) return res.status(404).json({ success: false, message: 'User not found.' });
+
         const room = await roomModel.findById(req.params.roomId);
-        if (!room) return res.status(404).send('This room is not available...');
+        if (!room) return res.status(404).json({ success: false, message: 'Room not found or unavailable.' });
 
-        if (room.availabilityStatus !== 'available') return res.status(400).send('Room is not available for booking.');
+        if (room.availabilityStatus !== 'available') return res.status(400).json({ success: false, message: 'Room is not available for booking.' });
 
-        if (room.availableSeats < seatsBooked) return res.status(400).send('No enough seats available.');
-        
-        if (room.capacity < seatsBooked) return res.status(400).send('No enough seats available.');
-        
+        if (room.availableSeats < seatsBooked) return res.status(400).json({ success: false, message: 'Not enough available seats.' });
+
         const now = new Date();
-        const expectedArrivalTime = new Date(now.getTime() + (minutesToArrive * 60 * 1000));
+        const expectedArrivalTime = new Date(now.getTime() + minutesToArrive * 60000);
 
         const reservation = new reservationModel({
             roomId: room._id,
             customerId: user._id,
             expectedArrivalTime,
             seatsBooked,
-        });
+        }); 
 
         await reservation.save();
-        res.status(201).send({ message: 'Reservation request submitted.', reservation });
+
+        const populatedReservation = await reservationModel.findById(reservation._id)
+            .populate('roomId','name pricePerHour type capacity')
+            .populate('customerId','firstName lastName');
+
+        console.log(populatedReservation);
+
+        room.availableSeats -= seatsBooked;
+        if (room.availableSeats === 0) room.availabilityStatus = 'full';
+        await room.save();
+
+        return res.status(201).json({
+            success: true,
+            message: 'Reservation request submitted successfully.',
+            populatedReservation
+        });
+
     } catch (error) {
-        res.status(500).send(error.message);
+        return res.status(500).json({ success: false, message: error.message });
     }
 }
 
