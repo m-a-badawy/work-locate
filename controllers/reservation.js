@@ -197,7 +197,7 @@ export async function getReservationsForCustomer(req, res) {
 
         if (!reservations.length) return res.status(404).json({ success: false, message: 'No reservation history found.' });
 
-        res.status(200).json({ success: true, message: 'Reservation history retrieved successfully.', reservations });
+        return res.status(200).json({ success: true, message: 'Reservation history retrieved successfully.', reservations });
     } catch (error) {
         return res.status(500).json({ success: false, message: error.message });
     }
@@ -230,7 +230,7 @@ export async function getReservationsForOwner(req, res) {
 
         if (!reservations.length) return res.status(404).json({ success: false, message: 'No reservations found for your rooms.' });
 
-        res.status(200).json({ success: true, message: 'Reservations retrieved successfully.', data: reservations });
+        return res.status(200).json({ success: true, message: 'Reservations retrieved successfully.', data: reservations });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -244,7 +244,7 @@ export async function getReservationsForAdmin(req, res) {
 
         if (!reservations.length) return res.status(404).json({ success: false, message: 'No reservations found.' });
 
-        res.status(200).json({ success: true, message: 'Reservations retrieved successfully.', data: reservations });
+        return res.status(200).json({ success: true, message: 'Reservations retrieved successfully.', data: reservations });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -254,21 +254,17 @@ export async function updateReservation(req, res) {
     try {
         const reservation = await reservationModel.findById(req.params.reservationId);
 
-        if (!reservation) return res.status(404).send('Reservation not found.');
-
-        if (req.user.role !== 'admin' && req.user.role !== 'owner' && reservation.customerId.toString() !== req.user._id) return res.status(403).send('Access denied.');
-
-        if (req.body.status && ['completed', 'expired'].includes(req.body.status)) return res.status(400).send('You cannot manually set the reservation as completed or expired.');
+        if (!reservation) return res.status(404).json({ success: false, message: 'Reservation not found.' });
 
         const updatedReservation = await reservationModel.findByIdAndUpdate(
-            reservationId,
+            req.params.reservationId,
             { $set: req.body },
             { new: true, runValidators: true }
         );
 
-        res.status(200).send({ message: 'Reservation updated successfully.', reservation: updatedReservation });
+        return res.status(200).json({ success: true, message: 'Reservation updated successfully.', reservation: updatedReservation });
 
     } catch (error) {
-        res.status(500).send(error.message);
+        return res.status(500).json({ success: false, message: error.message });
     }
 }

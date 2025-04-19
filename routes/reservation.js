@@ -83,7 +83,7 @@ router.put(
 
 router.patch(
     '/:reservationId/cancel', 
-    [ isAuth , validateObjectID('reservationId') ], 
+    [ isAuth , isOwner , validateObjectID('reservationId') ], 
     cancelReservation
 );
 
