@@ -183,7 +183,6 @@ export async function viewReservationDetails(req, res) {
 
 export async function getReservationsForCustomer(req, res) {
     try {
-
         const reservations = await reservationModel
             .find({ customerId: req.user._id })
             .populate({
@@ -196,26 +195,25 @@ export async function getReservationsForCustomer(req, res) {
             })
             .sort({ createdAt: -1 });
 
-        if (!reservations.length) return res.status(404).send('No reservation history found.');
+        if (!reservations.length) return res.status(404).json({ success: false, message: 'No reservation history found.' });
 
-        res.status(200).send(reservations);
+        res.status(200).json({ success: true, message: 'Reservation history retrieved successfully.', reservations });
     } catch (error) {
-        res.status(500).send(error.message);
+        return res.status(500).json({ success: false, message: error.message });
     }
 }
 
 export async function getReservationsForOwner(req, res) {
     try {
-        
         const workspaces = await workingSpaceModel.find({ ownerId: req.user._id }).select('_id');
-        if (!workspaces.length) return res.status(404).send('No workspaces found for this owner.');
+        if (!workspaces.length) return res.status(404).json({ success: false, message: 'No workspaces found for this owner.' });
 
-        const workspaceIds = workspaces.map(w => w._id);
+        const workspaceIds = workspaces.map(ws => ws._id);
 
         const rooms = await roomModel.find({ workspaceId: { $in: workspaceIds } }).select('_id');
-        if (!rooms.length) return res.status(404).send('No rooms found for your workspaces.');
+        if (!rooms.length) return res.status(404).json({ success: false, message: 'No rooms found for your workspaces.' });
 
-        const roomIds = rooms.map(r => r._id);
+        const roomIds = rooms.map(room => room._id);
 
         const reservations = await reservationModel
             .find({ roomId: { $in: roomIds } })
@@ -227,14 +225,14 @@ export async function getReservationsForOwner(req, res) {
                     select: 'name location'
                 }
             })
-            .populate('customerId', 'name email')
+            .populate('customerId', 'name email -_id')
             .sort({ createdAt: -1 });
 
-        if (!reservations.length) return res.status(404).send('No reservations found for your rooms.');
+        if (!reservations.length) return res.status(404).json({ success: false, message: 'No reservations found for your rooms.' });
 
-        res.status(200).json(reservations);
+        res.status(200).json({ success: true, message: 'Reservations retrieved successfully.', data: reservations });
     } catch (error) {
-        res.status(500).send(error.message);
+        res.status(500).json({ success: false, message: error.message });
     }
 }
 
