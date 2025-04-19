@@ -1,6 +1,6 @@
 import { reservationModel } from "../DB/model/reservation";
 
-export default async function isAdminOwnerOrCustomerOfReservation(req, res, next) {
+export default async (req, res, next) => {
     try {
         const reservation = await reservationModel.findById(req.params.reservationId);
 
