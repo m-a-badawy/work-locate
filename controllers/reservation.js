@@ -257,15 +257,34 @@ export async function updateReservation(req, res) {
 
         if (!reservation) return res.status(404).json({ success: false, message: 'Reservation not found.' });
 
-        const updatedReservation = await reservationModel.findByIdAndUpdate(
+        const updateFields = {};
+
+        if (req.body.minutesToArrive !== undefined) updateFields.expectedArrivalTime = new Date(Date.now() + req.body.minutesToArrive * 60000);
+
+        if (req.body.seatsBooked !== undefined) updateFields.seatsBooked = req.body.seatsBooked;
+
+        await reservationModel.findByIdAndUpdate(
             req.params.reservationId,
-            { $set: req.body },
-            { new: true, runValidators: true }
+            { $set: updateFields },
+            { runValidators: true }
         );
 
-        return res.status(200).json({ success: true, message: 'Reservation updated successfully.', reservation: updatedReservation });
+        const populatedReservation = await reservationModel
+            .findById(req.params.reservationId)
+            .populate({
+                path: 'roomId',
+                select: 'name capacity type pricePerHour workspaceId',
+                populate: {
+                    path: 'workspaceId',
+                    select: 'name location address'
+                }
+            })
+            .populate('customerId', 'firstName lastName email');
+
+        return res.status(200).json({ success: true, message: 'Reservation updated successfully.', reservation: populatedReservation });
 
     } catch (error) {
         return res.status(500).json({ success: false, message: error.message });
     }
 }
+
