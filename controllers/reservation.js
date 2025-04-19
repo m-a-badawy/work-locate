@@ -157,7 +157,6 @@ export async function cancelReservation(req, res) {
     }
 }
 
-
 export async function viewReservationDetails(req, res) {
     try {
         const reservation = await reservationModel.findOne({
@@ -167,19 +166,18 @@ export async function viewReservationDetails(req, res) {
         .populate({
             path: "roomId",
             select: "name capacity availabilityStatus type amenities availableSeats",
-            populate:({
+            populate: {
                 path: "workspaceId",
                 select: "name location address description"
-            }),
-            
+            }
         })
-        .populate('customerId' , 'name email phone -_id');
+        .populate('customerId', 'name email phone -_id');
 
-        if (!reservation) return res.status(404).send('Reservation not found.');
+        if (!reservation) return res.status(404).json({ success: false, message: 'Reservation not found.' });
 
-        res.status(200).send(reservation);
+        return res.status(200).json({ success: true, message: 'Reservation details fetched successfully.', reservation });
     } catch (error) {
-        res.status(500).send(error.message);
+        return res.status(500).json({ success: false, message: error.message });
     }
 }
 
@@ -208,9 +206,8 @@ export async function getReservationsForCustomer(req, res) {
 
 export async function getReservationsForOwner(req, res) {
     try {
-
         
-        const workspaces = await workingSpaceModel.find({ customerId: req.user._id }).select('_id');
+        const workspaces = await workingSpaceModel.find({ ownerId: req.user._id }).select('_id');
         if (!workspaces.length) return res.status(404).send('No workspaces found for this owner.');
 
         const workspaceIds = workspaces.map(w => w._id);
