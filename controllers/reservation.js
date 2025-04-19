@@ -240,22 +240,13 @@ export async function getReservationsForAdmin(req, res) {
     try {
         const reservations = await reservationModel
             .find({})
-            .populate({
-                path: 'roomId',
-                select: 'name workspaceId',
-                populate: {
-                    path: 'workspaceId',
-                    select: 'name location'
-                }
-            })
-            .populate('customerId', 'name email')
             .sort({ createdAt: -1 });
 
-        if (!reservations.length) return res.status(404).send('No reservations found.');
+        if (!reservations.length) return res.status(404).json({ success: false, message: 'No reservations found.' });
 
-        res.status(200).json(reservations);
+        res.status(200).json({ success: true, message: 'Reservations retrieved successfully.', data: reservations });
     } catch (error) {
-        res.status(500).send(error.message);
+        res.status(500).json({ success: false, message: error.message });
     }
 }
 
