@@ -33,8 +33,9 @@ export async function createReservation(req, res) {
         const populatedReservation = await reservationModel.findById(reservation._id)
             .populate('roomId','name pricePerHour type capacity')
             .populate('customerId','-_id firstName lastName');
-
-        room.availableSeats -= seatsBooked;
+        
+        
+        await room.reserveSeats(reservation.seatsBooked);
         if (room.availableSeats === 0) room.availabilityStatus = 'unavailable';
         await room.save();
 
@@ -55,7 +56,6 @@ export async function approveReservation(req, res) {
         const room = await roomModel.findById(reservation.roomId);
         if (!room) return res.status(404).json({ success: false, message: 'Room not found.' });
 
-        await room.reserveSeats(reservation.seatsBooked);
         reservation.status = 'confirmed';
         await reservation.save();
 
