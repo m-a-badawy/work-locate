@@ -103,30 +103,43 @@ export async function confirmArrival(req, res) {
 
 export async function completeReservation(req, res) {
     try {
-
         const reservation = await reservationModel.findOne({
             _id: req.params.reservationId,
-            status: 'active' 
+            status: 'active'
         });
-        
-        if (!reservation) return res.status(404).send('Reservation not found.');
 
-        if (reservation.status !== 'active') return res.status(400).send('Only active reservations can be completed.');
-        
+        if (!reservation) return res.status(404).json({ success: false, message: 'Reservation not found.' });
+
+        if (reservation.status !== 'active') return res.status(400).json({ success: false, message: 'Only active reservations can be completed.' });
+
         reservation.generateDuration();
 
         const room = await roomModel.findById(reservation.roomId);
-        if (!room) return res.status(404).send('Room not found.');
+        if (!room) return res.status(404).json({ success: false, message: 'Room not found.' });
 
-         reservation.generateTotalPrice(room.pricePerHour);
+        reservation.generateTotalPrice(room.pricePerHour);
+        reservation.status = 'completed';
+
         await reservation.save();
         await room.releaseSeats(reservation.seatsBooked);
 
-        res.status(200).send(reservation);
+        const populatedReservation = await reservationModel.findById(reservation._id)
+            .populate({
+                path: 'roomId',
+                select: 'name type pricePerHour capacity workspaceId',
+                populate: {
+                    path: 'workspaceId',
+                    select: 'name location'
+                }
+            })
+            .populate('customerId', 'name email phone');
+
+        return res.status(200).json({ success: true, message: 'Reservation completed successfully.', reservation: populatedReservation });
     } catch (error) {
-        res.status(500).send(error.message);
+        return res.status(500).json({ success: false, message: error.message });
     }
 }
+
 
 export async function cancelReservation(req, res) {
     try {
@@ -287,4 +300,3 @@ export async function updateReservation(req, res) {
         return res.status(500).json({ success: false, message: error.message });
     }
 }
-
