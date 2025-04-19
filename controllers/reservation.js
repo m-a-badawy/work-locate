@@ -45,26 +45,31 @@ export async function createReservation(req, res) {
     }
 }
 
-export async function approveReservation(req,res){
+export async function approveReservation(req, res) {
     try {
-
         const reservation = await reservationModel.findById(req.params.reservationId);
-        if (!reservation) return res.status(404).send('Reservation not found.');
+        if (!reservation) return res.status(404).json({ success: false, message: 'Reservation not found.' });
 
-        if (reservation.status !== 'pending') return res.status(400).send('Reservation is already confirmed or cancelled.');
+        if (reservation.status !== 'pending') return res.status(400).json({ success: false, message: 'Reservation is already confirmed or cancelled.' });
 
         const room = await roomModel.findById(reservation.roomId);
-        if (!room) return res.status(404).send('Room not found.');
-        
+        if (!room) return res.status(404).json({ success: false, message: 'Room not found.' });
+
         await room.reserveSeats(reservation.seatsBooked);
         reservation.status = 'confirmed';
         await reservation.save();
 
-        res.status(200).send({ message: 'Reservation approved.', reservation });
+        const populatedReservation = await reservationModel.findById(reservation._id)
+            .populate('roomId', 'name pricePerHour type capacity')
+            .populate('customerId', '-_id firstName lastName');
+
+        return res.status(200).json({ success: true, message: 'Reservation approved.', reservation: populatedReservation });
+
     } catch (error) {
-        res.status(500).send(error.message);
+        return res.status(500).json({ success: false, message: error.message });
     }
 }
+
 
 export async function confirmArrival(req, res) {
     try {
