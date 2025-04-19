@@ -2,7 +2,7 @@
 import updateReservationValidation from '../utils/Validations/models/reservation/updateReservationValidation.js';
 import confirmArrivalValidation from '../utils/Validations/models/reservation/confirmArrivalValidation.js';
 import reservationValidation from '../utils/Validations/models/reservation/reservationValidation.js';
-import isAdminOwnerOrCustomerOfReservation from '../middlewares/checkOwnerAdminOrCustomer.js';
+import checkOwnerAdminOrCustomer from '../middlewares/checkOwnerAdminOrCustomer.js';
 import validationSchema from '../middlewares/validationSchema.js';
 import validateObjectID from '../middlewares/validateObjectID.js';
 import isAdminOrIsOwner from '../middlewares/isAdminOrIsOwner.js';
@@ -78,7 +78,7 @@ router.get(
 
 router.put(
     '/:reservationId/update', 
-    [isAuth , isAdminOwnerOrCustomerOfReservation , validateObjectID('reservationId') , validationSchema(updateReservationValidation)], 
+    [isAuth , checkOwnerAdminOrCustomer , validateObjectID('reservationId') , validationSchema(updateReservationValidation)], 
     updateReservation
 );
 
