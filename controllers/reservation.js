@@ -70,35 +70,37 @@ export async function approveReservation(req, res) {
     }
 }
 
-
 export async function confirmArrival(req, res) {
     try {
         const reservation = await reservationModel.findById(req.params.reservationId);
-        if (!reservation) return res.status(404).send('Reservation not found.');
+        if (!reservation) return res.status(404).json({ success: false, message: 'Reservation not found.' });
 
-        if (reservation.status !== 'confirmed') return res.status(400).send('Reservation is not confirmed yet.');
+        if (reservation.status !== 'confirmed') return res.status(400).json({ success: false, message: 'Reservation is not confirmed yet.' });
 
         const now = new Date();
 
         if (now > reservation.expectedArrivalTime) {
             reservation.status = 'expired';
             await reservation.save();
-            return res.status(400).send('Reservation expired due to late arrival.');
+            return res.status(400).json({ success: false, message: 'Reservation expired due to late arrival.' });
         }
 
-        if (reservation.startTime) {
-            return res.status(400).send('Arrival already confirmed.');
-        }
+        if (reservation.startTime) return res.status(400).json({ success: false, message: 'Arrival already confirmed.' });
 
         reservation.startTime = now;
         reservation.status = 'active';
         await reservation.save();
 
-        res.status(200).send({ message: 'Customer arrival confirmed. Timer started.', reservation });
+        const populatedReservation = await reservationModel.findById(reservation._id)
+            .populate('roomId', 'name pricePerHour type capacity')
+            .populate('customerId', '-_id firstName lastName');
+
+        return res.status(200).json({ success: true, message: 'Customer arrival confirmed. Timer started.', reservation: populatedReservation });
     } catch (error) {
-        res.status(500).send(error.message);
+        return res.status(500).json({ success: false, message: error.message });
     }
 }
+
 
 export async function completeReservation(req, res) {
     try {
