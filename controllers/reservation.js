@@ -101,7 +101,6 @@ export async function confirmArrival(req, res) {
     }
 }
 
-
 export async function completeReservation(req, res) {
     try {
 
@@ -131,29 +130,34 @@ export async function completeReservation(req, res) {
 
 export async function cancelReservation(req, res) {
     try {
-
         const reservation = await reservationModel.findOne({
             _id: req.params.reservationId,
-            customerId: req.user._id, 
-            status: { $in: ['pending', 'confirmed'] } 
+            customerId: req.user._id,
+            status: { $in: ['pending', 'confirmed'] }
         });
-        if (!reservation) return res.status(404).send('Reservation not found.');
 
-        if (reservation.status === 'completed') return res.status(400).send('Cannot cancel a completed reservation.');
+        if (!reservation) return res.status(404).json({ success: false, message: 'Reservation not found.' });
+
+        if (reservation.status === 'completed') return res.status(400).json({ success: false, message: 'Cannot cancel a completed reservation.' });
 
         const room = await roomModel.findById(reservation.roomId);
-        if (!room) return res.status(404).send('Room not found.');
+        if (!room) return res.status(404).json({ success: false, message: 'Room not found.' });
 
         await room.releaseSeats(reservation.seatsBooked);
 
         reservation.status = 'cancelled';
         await reservation.save();
 
-        res.status(200).send({ message: 'Reservation cancelled successfully.', reservation });
+        const populatedReservation = await reservationModel.findById(reservation._id)
+            .populate('roomId', 'name pricePerHour type capacity')
+            .populate('customerId', '-_id firstName lastName');
+
+        return res.status(200).json({ success: true, message: 'Reservation cancelled successfully.', reservation: populatedReservation });
     } catch (error) {
-        res.status(500).send(error.message);
+        return res.status(500).json({ success: false, message: error.message });
     }
 }
+
 
 export async function viewReservationDetails(req, res) {
     try {
