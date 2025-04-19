@@ -132,7 +132,6 @@ export async function cancelReservation(req, res) {
     try {
         const reservation = await reservationModel.findOne({
             _id: req.params.reservationId,
-            customerId: req.user._id,
             status: { $in: ['pending', 'confirmed'] }
         });
 
