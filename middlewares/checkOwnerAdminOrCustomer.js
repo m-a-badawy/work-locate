@@ -1,12 +1,10 @@
-import { reservationModel } from "../DB/model/reservation";
+import { reservationModel } from "../DB/model/reservation.js";
 
 export default async (req, res, next) => {
     try {
         const reservation = await reservationModel.findById(req.params.reservationId);
 
-        if (!reservation) {
-            return res.status(404).json({ success: false, message: 'Reservation not found.' });
-        }
+        if (!reservation) return res.status(404).json({ success: false, message: 'Reservation not found.' });
 
         const isAdmin = req.user.role === 'admin';
         const isOwner = req.user.role === 'owner';
