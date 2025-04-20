@@ -13,14 +13,6 @@ const reviewSchema = new mongoose.Schema({
         maxlength: 500,
         required: false,
     },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    },
-    updatedAt: {
-        type: Date,
-        default: Date.now
-    },
     customerId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',

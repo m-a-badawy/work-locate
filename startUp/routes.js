@@ -17,7 +17,7 @@ export default (app) => {
     app.use('/api/reservation', reservation);
     app.use('/api/workspace', workingSpace);
     //app.use('/api/payment', payment);
-    //app.use('/api/review', review);
+    app.use('/api/review', review);   
     app.use('/api/room', rooms);
     app.use('/api/auth', user);
     app.use(error);

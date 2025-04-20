@@ -140,7 +140,6 @@ export async function completeReservation(req, res) {
     }
 }
 
-
 export async function cancelReservation(req, res) {
     try {
         const reservation = await reservationModel.findOne({
