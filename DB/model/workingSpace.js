@@ -1,4 +1,4 @@
-import { reviewModel } from '../model/review.js';
+import { reviewModel } from '../model/review'; // تأكد من المسار الصحيح
 import mongoose from 'mongoose';
 
 const workingSpaceSchema = new mongoose.Schema({
@@ -62,27 +62,25 @@ const workingSpaceSchema = new mongoose.Schema({
   }]
 },{timestamps: true});
 
-workspaceSchema.statics.recalculateAverageRating = async function (workspaceId) {
-
-  const reviews = await reviewModel.findById({ workspaceId   });
+workingSpaceSchema.statics.recalculateAverageRating = async function (workspaceId) {
+  const reviews = await reviewModel.find({ workspaceId }); 
 
   const average = reviews.length === 0 ? 0 : reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
 
-  await this.findByIdAndUpdate(workspaceId, {averageRating: average.toFixed(1) });
+  await this.findByIdAndUpdate(workspaceId, { averageRating: average.toFixed(1) });
 };
 
-reviewSchema.post('save', function() {
-  this.constructor.recalculateAverageRating(this.workspaceId);
+workingSpaceSchema.post('save', function() {
+  this.constructor.recalculateAverageRating(this._id); 
 });
 
-reviewSchema.post('findOneAndUpdate', function() {
-  this.constructor.recalculateAverageRating(this.workspaceId);
+workingSpaceSchema.post('findOneAndUpdate', function() {
+  if (this._id) this.constructor.recalculateAverageRating(this._id);
 });
 
-reviewSchema.post('findOneAndDelete', function() {
-  this.constructor.recalculateAverageRating(this.workspaceId);
+workingSpaceSchema.post('findOneAndDelete', function() {
+  if (this._id) this.constructor.recalculateAverageRating(this._id);
 });
-
 
 const workingSpaceModel = mongoose.model('WorkingSpace', workingSpaceSchema);
 
