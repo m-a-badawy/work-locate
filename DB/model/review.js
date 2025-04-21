@@ -20,7 +20,7 @@ const reviewSchema = new mongoose.Schema({
     },
     workspaceId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Workspace',
+        ref: 'WorkingSpace',
         required: true
     }
 }, { timestamps: true });
