@@ -1,4 +1,4 @@
-import { reviewModel } from './review';
+import { reviewModel } from '../model/review.js';
 import mongoose from 'mongoose';
 
 const workingSpaceSchema = new mongoose.Schema({
