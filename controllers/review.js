@@ -2,7 +2,6 @@ import { workingSpaceModel } from '../DB/model/workingSpace.js';
 import { reviewModel } from '../DB/model/review.js';
 import { userModel } from '../DB/model/user.js';
 
-
 export async function createWorkSpaceReview(req, res) {
     try {
       const { rating, comment } = req.body;
@@ -21,13 +20,8 @@ export async function createWorkSpaceReview(req, res) {
       });
   
       await review.save();
-  
-      const reviews = await reviewModel.find({ workspaceId: req.params.workspaceId });
-      const totalRatings = reviews.reduce((acc, review) => acc + review.rating, 0);
-      const averageRating = reviews.length > 0 ? (totalRatings / reviews.length).toFixed(1) : 0;
-  
-      workSpace.averageRating = parseFloat(averageRating);
-      await workSpace.save();
+
+      await workingSpaceModel.recalculateAverageRating(req.params.workspaceId);
   
       const populatedReview = await reviewModel.findById(review._id)
         .populate('customerId', 'firstName lastName -_id')
@@ -38,7 +32,7 @@ export async function createWorkSpaceReview(req, res) {
     } catch (error) {
       return res.status(500).json({ success: false, message: error.message });
     }
-}  
+}
 
 export async function updateWorkSpaceReview(req, res) {
     try {
@@ -47,7 +41,6 @@ export async function updateWorkSpaceReview(req, res) {
         const review = await reviewModel.findById(req.params.reviewId);
         if (!review) return res.status(404).json({ success: false, message: 'Review not found.' });
 
-        
         if (!review.customerId.equals(req.user._id)) return res.status(403).json({ success: false, message: 'You are not authorized to update this review.' });
 
         const updatedReview = await reviewModel.findOneAndUpdate(
@@ -57,6 +50,8 @@ export async function updateWorkSpaceReview(req, res) {
         )
         .populate('customerId', 'firstName lastName -_id')
         .populate('workspaceId', 'name');
+
+        await workingSpaceModel.recalculateAverageRating(updatedReview.workspaceId);
 
         return res.status(200).json({ success: true, message: 'Review updated successfully.', review: updatedReview });
 
@@ -72,7 +67,11 @@ export async function deleteWorkSpaceReview(req, res) {
 
         if (!review.customerId.equals(req.user._id)) return res.status(403).json({ success: false, message: 'You are not authorized to delete this review.' });
 
+        const workspaceId = review.workspaceId;
+
         await reviewModel.deleteOne({ _id: review._id });
+
+        await workingSpaceModel.recalculateAverageRating(workspaceId);
 
         return res.status(200).json({ success: true, message: 'Review deleted successfully.' });
 

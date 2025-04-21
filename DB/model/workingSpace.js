@@ -1,3 +1,4 @@
+import { reviewModel } from './review';
 import mongoose from 'mongoose';
 
 const workingSpaceSchema = new mongoose.Schema({
@@ -60,6 +61,28 @@ const workingSpaceSchema = new mongoose.Schema({
     required: true,
   }]
 },{timestamps: true});
+
+workspaceSchema.statics.recalculateAverageRating = async function (workspaceId) {
+
+  const reviews = await reviewModel.findById({ workspaceId   });
+
+  const average = reviews.length === 0 ? 0 : reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+
+  await this.findByIdAndUpdate(workspaceId, {averageRating: average.toFixed(1) });
+};
+
+reviewSchema.post('save', function() {
+  this.constructor.recalculateAverageRating(this.workspaceId);
+});
+
+reviewSchema.post('findOneAndUpdate', function() {
+  this.constructor.recalculateAverageRating(this.workspaceId);
+});
+
+reviewSchema.post('findOneAndDelete', function() {
+  this.constructor.recalculateAverageRating(this.workspaceId);
+});
+
 
 const workingSpaceModel = mongoose.model('WorkingSpace', workingSpaceSchema);
 
