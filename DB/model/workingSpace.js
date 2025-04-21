@@ -1,4 +1,4 @@
-import { reviewModel } from '../model/review'; // تأكد من المسار الصحيح
+import { reviewModel } from '../../DB/model/review.js';
 import mongoose from 'mongoose';
 
 const workingSpaceSchema = new mongoose.Schema({
