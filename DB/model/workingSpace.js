@@ -34,10 +34,11 @@ const workingSpaceSchema = new mongoose.Schema({
     maxlength: 500,
     trim: true
   },
-  rating: {
+  averageRating: {
     type: Number,
     min: 1,
     max: 5,
+    default: 0,
   },
   amenities: {
     type: [String],
@@ -57,10 +58,9 @@ const workingSpaceSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Review', 
     required: true,
-}]
-},{timestamps: true,});
+  }]
+},{timestamps: true});
 
 const workingSpaceModel = mongoose.model('WorkingSpace', workingSpaceSchema);
-
 
 export { workingSpaceModel, workingSpaceSchema };

@@ -1,5 +1,5 @@
-import { userModel } from '../DB/model/user.js';
 import { workingSpaceModel } from '../DB/model/workingSpace.js';
+import { userModel } from '../DB/model/user.js';
 
 export async function createWorkingSpace(req, res) {
   try {
@@ -56,10 +56,17 @@ export async function viewWorkingSpaceDetails(req, res) {
     }
 };
 
-// we be implemented based on the review route
-export async function  getRatingAverage(req , res) {
+export async function getRatingAverage(req, res) {
+  try {
+    const workSpace = await workingSpaceModel.findById(req.params.workspaceId);
+    
+    if (!workSpace) return res.status(404).json({ success: false, message: 'Workspace not found.' });
 
-};
+    return res.status(200).json({ success: true, averageRating: workSpace.averageRating });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+}
 
 export async function updateWorkingSpace(req, res) {
     try {
