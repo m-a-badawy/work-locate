@@ -9,7 +9,7 @@ export async function createWorkSpaceReview(req, res) {
         const user = await userModel.findById(req.user._id);
         if (!user) return res.status(404).json({ success: false, message: 'User not found.' });
 
-        const workSpace = await workingSpaceModel.findById(req.params.roomId);
+        const workSpace = await workingSpaceModel.findById(req.params.workspaceId);
         if (!workSpace) return res.status(404).json({ success: false, message: 'Workspace not found or unavailable.' });
 
         const review = new reviewModel({
