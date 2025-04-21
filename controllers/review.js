@@ -16,7 +16,7 @@ export async function createWorkSpaceReview(req, res) {
             rating,
             comment,
             customerId: req.user._id,
-            workspaceId: req.params.roomId
+            workspaceId: req.params.workspaceId
         });
 
         await review.save();
