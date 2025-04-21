@@ -40,7 +40,7 @@ export async function updateWorkSpaceReview(req, res) {
         if (!review) return res.status(404).json({ success: false, message: 'Review not found.' });
 
         
-        if (!review.customerId.equals(req.user._id)) return res.status(403).json({ success: false, message: 'You are not authorized to delete this review.' });
+        if (!review.customerId.equals(req.user._id)) return res.status(403).json({ success: false, message: 'You are not authorized to update this review.' });
 
         const updatedReview = await reviewModel.findOneAndUpdate(
             { _id: req.params.reviewId, customerId: req.user._id },

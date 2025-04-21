@@ -1,4 +1,4 @@
-import updateReservationValidation from '../utils/Validations/models/reservation/updateReservationValidation.js';
+import updateReviewValidation from '../utils/Validations/models/review/updateReviewValidation.js';
 import reviewValidation from '../utils/Validations/models/review/reviewValidation.js';
 import validationSchema from '../middlewares/validationSchema.js';
 import validateObjectID from '../middlewares/validateObjectID.js';
@@ -29,7 +29,7 @@ router.post(
 
 router.put(
     '/:reviewId/update',
-    [isAuth , validateObjectID('reviewId') , validationSchema(updateReservationValidation)],
+    [isAuth , validateObjectID('reviewId') , validationSchema(updateReviewValidation)],
     updateWorkSpaceReview
 )
 
