@@ -63,3 +63,4 @@ router.get(
     getReviewsForAdmin
 )
 
+export default router;
