@@ -5,33 +5,40 @@ import { userModel } from '../DB/model/user.js';
 
 export async function createWorkSpaceReview(req, res) {
     try {
-        const { rating, comment } = req.body;
-
-        const user = await userModel.findById(req.user._id);
-        if (!user) return res.status(404).json({ success: false, message: 'User not found.' });
-
-        const workSpace = await workingSpaceModel.findById(req.params.workspaceId);
-        if (!workSpace) return res.status(404).json({ success: false, message: 'Workspace not found or unavailable.' });
-
-        const review = new reviewModel({
-            rating,
-            comment,
-            customerId: req.user._id,
-            workspaceId: req.params.workspaceId
-        });
-
-        await review.save();
-
-        const populatedReview = await reviewModel.findById(review._id)
-            .populate('customerId', 'firstName lastName -_id')
-            .populate('workspaceId', 'name');
-
-        return res.status(201).json({ success: true, message: 'Review created successfully.', review: populatedReview });
-
+      const { rating, comment } = req.body;
+  
+      const user = await userModel.findById(req.user._id);
+      if (!user) return res.status(404).json({ success: false, message: 'User not found.' });
+  
+      const workSpace = await workingSpaceModel.findById(req.params.workspaceId);
+      if (!workSpace) return res.status(404).json({ success: false, message: 'Workspace not found or unavailable.' });
+  
+      const review = new reviewModel({
+        rating,
+        comment,
+        customerId: req.user._id,
+        workspaceId: req.params.workspaceId
+      });
+  
+      await review.save();
+  
+      const reviews = await reviewModel.find({ workspaceId: req.params.workspaceId });
+      const totalRatings = reviews.reduce((acc, review) => acc + review.rating, 0);
+      const averageRating = reviews.length > 0 ? (totalRatings / reviews.length).toFixed(1) : 0;
+  
+      workSpace.averageRating = parseFloat(averageRating);
+      await workSpace.save();
+  
+      const populatedReview = await reviewModel.findById(review._id)
+        .populate('customerId', 'firstName lastName -_id')
+        .populate('workspaceId', 'name');
+  
+      return res.status(201).json({ success: true, message: 'Review created successfully.', review: populatedReview });
+  
     } catch (error) {
-        return res.status(500).json({ success: false, message: error.message });
+      return res.status(500).json({ success: false, message: error.message });
     }
-}
+}  
 
 export async function updateWorkSpaceReview(req, res) {
     try {
