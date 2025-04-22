@@ -1,5 +1,5 @@
 import { reservationModel } from '../DB/model/reservation.js';
-import { workspaceModel } from '../DB/model/workspace.js';
+import { workspaceModel } from '../DB/model/workingSpace.js';
 import { reviewModel } from '../DB/model/review.js';
 import { roomModel } from '../DB/model/room.js';
 import { userModel } from '../DB/model/user.js';
