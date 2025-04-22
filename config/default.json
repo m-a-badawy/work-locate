@@ -5,5 +5,5 @@
       "service": "EMAIL_SERVICE"
     },
     "jwtPrivateKey": "JWT_PRIVATE_KEY",
-    "db" : "mongodb://localhost:27017/workLocate"
+    "db" : "db"
 }
