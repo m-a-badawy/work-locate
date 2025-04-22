@@ -39,7 +39,6 @@ const workingSpaceSchema = new mongoose.Schema({
     type: Number,
     min: 1,
     max: 5,
-    default: 0,
   },
   amenities: {
     type: [String],
