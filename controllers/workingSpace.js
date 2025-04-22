@@ -26,27 +26,29 @@ export async function createWorkingSpace(req, res) {
 };
 
 export async function viewAllWorkingSpaceDetails(req, res) {
-    try {
-      const workingSpaces = await workingSpaceModel
-        .find()
-        .sort('name')
-        .populate('ownerId', ' -_id firstName lastName')
-      res.status(200).json({ success: true, data: workingSpaces });
-    } catch (err) {
-        console.error('Error in viewAllWorkingSpaceDetails:', err.message || err);
-        res.status(500).json({ success: false, message: 'Something went wrong. Please try again later.' });
-    }
+  try {
+    const workingSpaces = await workingSpaceModel
+      .find()
+      .sort('name')
+      .populate('ownerId', ' -_id firstName lastName')
+      .populate('reviews' , 'rating comment');
+
+    res.status(200).json({ success: true, data: workingSpaces });
+  } catch (err) {
+      console.error('Error in viewAllWorkingSpaceDetails:', err.message || err);
+      res.status(500).json({ success: false, message: 'Something went wrong. Please try again later.' });
+  }
 };
 
 export async function viewWorkingSpaceDetails(req, res) {
     try {
       const workingSpace = await workingSpaceModel
         .findById(req.params.workspaceId)
-        .populate('ownerId', '-_id firstName lastName');
-  
-      if (!workingSpace) {
-        return res.status(404).json({ success: false, message: 'Workspace not found' });
-      }
+        .populate('ownerId', '-_id firstName lastName')
+        .populate('reviews', 'rating comment');
+
+      if (!workingSpace) return res.status(404).json({ success: false, message: 'Workspace not found' });
+
   
       res.status(200).json({ success: true, workingSpace });
   
@@ -76,7 +78,9 @@ export async function updateWorkingSpace(req, res) {
         req.params.workspaceId,
         updatedData,
         { new: true, runValidators: true }
-      ).populate('ownerId', 'firstName lastName -_id');
+      )
+      .populate('ownerId', 'firstName lastName -_id')
+      .populate('reviews', 'rating comment');
   
       if (!workingSpace) {
         return res.status(404).json({ success: false, message: 'Workspace not found' });
