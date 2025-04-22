@@ -39,6 +39,7 @@ const workingSpaceSchema = new mongoose.Schema({
     type: Number,
     min: 1,
     max: 5,
+    default: 1
   },
   amenities: {
     type: [String],
@@ -62,19 +63,11 @@ const workingSpaceSchema = new mongoose.Schema({
 },{timestamps: true});
 
 workingSpaceSchema.statics.recalculateAverageRating = async function (workspaceId) {
-  try {
-    const result = await reviewModel.aggregate([
-      { $match: { workspaceId: mongoose.Types.ObjectId(workspaceId) } },
-      { $group: { _id: null, average: { $avg: "$rating" } } },
-    ]);
+  const reviews = await reviewModel.find({ workspaceId });
 
-    const average = result.length > 0 ? result[0].average : null;
+  const average = reviews.length === 0 ? 1 : reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
 
-    await this.findByIdAndUpdate(workspaceId, { averageRating: average });
-
-  } catch (error) {
-    console.error('Error in recalculateAverageRating:', error.message || error);
-  }
+  await this.findByIdAndUpdate(workspaceId, { averageRating: Math.max(average, 1).toFixed(1) });
 };
 
 
