@@ -1,4 +1,5 @@
 import { reservationModel } from '../DB/model/reservation.js';
+import { workspaceModel } from '../DB/model/workspace.js';
 import { reviewModel } from '../DB/model/review.js';
 import { roomModel } from '../DB/model/room.js';
 import { userModel } from '../DB/model/user.js';
@@ -47,13 +48,22 @@ export const seedReviews = async () => {
     }
 
     if (reviews.length > 0) {
-      await reviewModel.insertMany(reviews);
-      console.log(`✅ Successfully added ${reviews.length} reviews.`);
+      const insertedReviews = await reviewModel.insertMany(reviews);
+      console.log(`✅ Successfully added ${insertedReviews.length} reviews.`);
+
+      for (const review of insertedReviews) {
+        const workspaceId = review.workspaceId;
+
+        await workspaceModel.findByIdAndUpdate(workspaceId, {
+          $push: { reviews: review._id }
+        });
+      }
+
+      console.log('🌱 All reviews seeded successfully.');
     } else {
       console.log('⚠️ No reviews to add.');
     }
 
-    console.log('🌱 All reviews seeded successfully.');
     await mongoose.disconnect();
   } catch (err) {
     console.error('❌ Error while seeding reviews:', err.message);
