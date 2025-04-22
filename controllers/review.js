@@ -65,21 +65,28 @@ export async function updateWorkSpaceReview(req, res) {
 
 export async function deleteWorkSpaceReview(req, res) {
     try {
-        const review = await reviewModel.findById(req.params.reviewId);
-        if (!review)  return res.status(404).json({ success: false, message: 'Review not found.' });
+      const review = await reviewModel.findById(req.params.reviewId);
+      if (!review) return res.status(404).json({ success: false, message: 'Review not found.' });
+  
+      if (!review.customerId.equals(req.user._id)) return res.status(403).json({ success: false, message: 'You are not authorized to delete this review.' });
+  
+      const workspaceId = review.workspaceId;
 
-        if (!review.customerId.equals(req.user._id)) return res.status(403).json({ success: false, message: 'You are not authorized to delete this review.' });
-
-        const workspaceId = review.workspaceId;
-
-        await reviewModel.deleteOne({ _id: review._id });
-
-        await workingSpaceModel.recalculateAverageRating(workspaceId);
-
-        return res.status(200).json({ success: true, message: 'Review deleted successfully.' });
-
+      await workingSpaceModel.findByIdAndUpdate(
+        workspaceId,
+        { $pull: { reviews: review._id } },
+        { new: true }
+      );
+  
+      await reviewModel.deleteOne({ _id: review._id });
+  
+      await workingSpaceModel.recalculateAverageRating(workspaceId);
+  
+      return res.status(200).json({ success: true, message: 'Review deleted successfully.' });
+  
     } catch (error) {
-        return res.status(500).json({ success: false, message: error.message });
+      console.error('Error in deleteWorkSpaceReview:', error.message || error);
+      return res.status(500).json({ success: false, message: error.message });
     }
 }
 
@@ -154,60 +161,9 @@ export async function getReviewsForAdmin(req, res) {
 
 
 
-// export async function updateWorkSpaceReview(req, res) {
-//     try {
-//       const reviewData = { ...req.body };
-  
-//       const review = await reviewModel.findById(req.params.reviewId);
-//       if (!review) return res.status(404).json({ success: false, message: 'Review not found.' });
-  
-//       if (!review.customerId.equals(req.user._id)) {
-//         return res.status(403).json({ success: false, message: 'You are not authorized to update this review.' });
-//       }
-//       const updatedReview = await reviewModel.findOneAndUpdate(
-//         { _id: req.params.reviewId, customerId: req.user._id },
-//         reviewData,
-//         { new: true, runValidators: true }
-//       )
-//         .populate('customerId', 'firstName lastName -_id')
-//         .populate('workspaceId', 'name');
-  
-//       await workingSpaceModel.recalculateAverageRating(updatedReview.workspaceId);
-  
-//       return res.status(200).json({ success: true, message: 'Review updated successfully.', review: updatedReview });
-  
-//     } catch (error) {
-//       console.error('Error in updateWorkSpaceReview:', error.message || error);
-//       return res.status(500).json({ success: false, message: error.message });
-//     }
-// }  
 
-// export async function deleteWorkSpaceReview(req, res) {
-//     try {
-//       const review = await reviewModel.findById(req.params.reviewId);
-//       if (!review) return res.status(404).json({ success: false, message: 'Review not found.' });
-  
-//       if (!review.customerId.equals(req.user._id)) return res.status(403).json({ success: false, message: 'You are not authorized to delete this review.' });
-  
-//       const workspaceId = review.workspaceId;
 
-//       await workingSpaceModel.findByIdAndUpdate(
-//         workspaceId,
-//         { $pull: { reviews: review._id } },
-//         { new: true }
-//       );
-  
-//       await reviewModel.deleteOne({ _id: review._id });
-  
-//       await workingSpaceModel.recalculateAverageRating(workspaceId);
-  
-//       return res.status(200).json({ success: true, message: 'Review deleted successfully.' });
-  
-//     } catch (error) {
-//       console.error('Error in deleteWorkSpaceReview:', error.message || error);
-//       return res.status(500).json({ success: false, message: error.message });
-//     }
-// }  
+ 
 
 // export async function getReviewsByWorkspace(req, res) {
 //     try {
