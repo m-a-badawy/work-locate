@@ -1,54 +1,50 @@
-import { workingSpaceModel } from '../DB/model/workingSpace.js';
 import { userModel } from '../DB/model/user.js';
 import { faker } from '@faker-js/faker';
+import db from '../startUp/db.js';
+import bcrypt from 'bcrypt';
 
 faker.locale = 'en';
 
-const egyptCities = ['Cairo', 'Alexandria', 'Giza', 'Mansoura', 'Tanta', 'Aswan', 'Luxor'];
-const amenitiesList = ['Wi-Fi', 'Coffee', 'AC', 'Meeting Room', 'Printer'];
+const egyptianFirstNames = ['Ahmed', 'Mohamed', 'Sara', 'Hassan', 'Youssef', 'Mona'];
+const egyptianLastNames = ['Ali', 'Mahmoud', 'Ibrahim', 'Khaled', 'Tamer', 'Fathy'];
+const egyptianPhones = ['010', '011', '012', '015'];
 
-export const seedWorkspaces = async () => {
+const generateEgyptianPhone = () => {
+  const prefix = faker.helpers.arrayElement(egyptianPhones);
+  const number = faker.string.numeric(8);
+  return prefix + number;
+};
+
+const seedUsers = async () => {
   try {
-    const owners = await userModel.find({ role: 'owner' });
+    await db();
 
-    if (!owners.length) {
-      console.log('⚠️ No owners found in the database.');
-      return;
+    const users = [];
+
+    for (let i = 0; i < 200; i++) {
+      const firstName = faker.helpers.arrayElement(egyptianFirstNames);
+      const lastName = faker.helpers.arrayElement(egyptianLastNames);
+      const email = faker.internet.email(firstName, lastName);
+      const phone = generateEgyptianPhone();
+      const rawPassword = faker.internet.password(8);
+      const hashedPassword = await bcrypt.hash(rawPassword, 10);
+
+      users.push({
+        firstName,
+        lastName,
+        email,
+        phone,
+        password: hashedPassword,
+      });
     }
 
-    for (const owner of owners) {
-      const workspaces = [];
-
-      for (let i = 0; i < 10; i++) {
-        const city = faker.helpers.arrayElement(egyptCities);
-
-        const workspace = {
-          name: faker.company.name() + ' Workspace',
-          location: {
-            type: 'Point',
-            coordinates: [
-              parseFloat((29 + Math.random()).toFixed(6)),
-              parseFloat((31 + Math.random()).toFixed(6))
-            ]
-          },
-          address: `${faker.location.streetAddress()}, ${city}, Egypt`,
-          description: faker.lorem.sentences(2),
-          amenities: faker.helpers.arrayElements(amenitiesList, Math.floor(Math.random() * amenitiesList.length) + 1),
-          roomCounter: faker.number.int({ min: 1, max: 10 }),
-          ownerId: owner._id,
-          reviews: []
-        };
-
-        workspaces.push(workspace);
-      }
-
-      await workingSpaceModel.insertMany(workspaces);
-    }
-
-    console.log('✅ Workspaces seeded successfully for all owners.');
+    await userModel.insertMany(users);
+    console.log('✅ Inserted 200 Egyptian users with hashed passwords');
+    process.exit();
   } catch (error) {
-    console.error('❌ Error while seeding workspaces:', error.message);
+    console.error('❌ Error seeding users:', error.message);
+    process.exit(1);
   }
 };
 
-seedWorkspaces();
+seedUsers();
