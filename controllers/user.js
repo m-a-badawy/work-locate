@@ -1,4 +1,6 @@
 import { workingSpaceModel } from '../DB/model/workingSpace.js';
+import { reservationModel } from '../DB/model/reservation.js';
+import { roomModel } from '../DB/model/room.js';
 import { userModel } from '../DB/model/user.js';
 import config  from 'config';
 import bcrypt from 'bcrypt';
