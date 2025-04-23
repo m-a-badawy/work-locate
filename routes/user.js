@@ -33,8 +33,6 @@ import {
     register, 
     login
 } from '../controllers/user.js';
-import isAdmin from '../middlewares/isAdmin.js';
-import isOwner from '../middlewares/isOwner.js';
 
 const router = express.Router();
 
