@@ -7,7 +7,7 @@ import isAuth from '../middlewares/isAuth.js';
 import express from 'express';
 
 import {
-    viewAllWorkingSpaceDetails, 
+    viewAllWorkingSpaceDetailsForAdminOwnerCustomer, 
     viewWorkingSpaceDetails, 
     createWorkingSpace, 
     updateWorkingSpace, 
@@ -21,7 +21,7 @@ const router = express.Router();
 router.get(
     '/all',
     isAuth,
-    viewAllWorkingSpaceDetails
+    viewAllWorkingSpaceDetailsForAdminOwnerCustomer
 );
 
 router.get(
@@ -30,7 +30,6 @@ router.get(
     viewWorkingSpaceDetails
 );
 
-// not completed -> will be implemented when we finish the review route
 router.get(
     '/:workspaceId',
     [isAuth , validateObjectID('workspaceId')],

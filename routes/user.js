@@ -8,6 +8,8 @@ import loggingValidation from '../utils/Validations/models/user/loggingValidatio
 import emailVerificationPasswordReset from '../middlewares/email.js';
 import validationSchema from '../middlewares/validationSchema.js';
 import resetAuth from "../middlewares/resetAuth.js";
+import isAdmin from '../middlewares/isAdmin.js';
+import isOwner from '../middlewares/isOwner.js';
 import isAuth from '../middlewares/isAuth.js';
 import express from 'express';
 
@@ -18,6 +20,8 @@ import express from 'express';
 */
 
 import {
+    viewUsersForSpecificOwnerInSpecificWorkspace,
+    viewAllUsersForAdmin,
     viewAccountDetails,
     deactivateAccount,
     verifyResetCode,
@@ -29,6 +33,8 @@ import {
     register, 
     login
 } from '../controllers/user.js';
+import isAdmin from '../middlewares/isAdmin.js';
+import isOwner from '../middlewares/isOwner.js';
 
 const router = express.Router();
 
@@ -98,5 +104,16 @@ router.post(
     changePassword
 );
 
+router.get(
+    '/:workspaceId/customers',
+    [isAuth, isOwner],
+    viewUsersForSpecificOwnerInSpecificWorkspace
+);
+
+router.get(
+    '/admin/users',
+    [isAuth, isAdmin],
+    viewAllUsersForAdmin
+);
 
 export default router;

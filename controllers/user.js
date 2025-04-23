@@ -221,6 +221,45 @@ export async function deactivateAccount(req, res) {
     }
 }
 
+export async function viewAllUsersForAdmin(req, res) {
+    try {
+      const users = await userModel.find({}, '-password -__v');
+      if (!users.length) return res.status(404).json({ success: false, message: 'No users found.' });
+  
+      res.status(200).json({ success: true, data: users });
+    } catch (err) {
+      console.error('Error in viewAllUsers:', err.message || err);
+      res.status(500).json({ success: false, message: 'Something went wrong. Please try again later.' });
+    }
+}
+
+export async function viewUsersForSpecificOwnerInSpecificWorkspace(req, res) {
+  try {
+
+    const workspace = await workingSpaceModel.findOne({ _id: req.params.workspaceId, ownerId:req.user._id });
+    if (!workspace)return res.status(404).json({ success: false, message: 'Workspace not found or does not belong to this owner.' });
+
+    const rooms = await roomModel.find({ workspaceId: req.params.workspaceId }, '_id');
+    const roomIds = rooms.map(room => room._id);
+
+    const reservations = await reservationModel.find({ roomId: { $in: roomIds } }, 'customerId');
+
+    const customerIds = [...new Set(reservations.map(r => r.customerId.toString()))];
+
+    const customers = await userModel.find(
+      { _id: { $in: customerIds } },
+      'firstName lastName email phone'
+    );
+
+    if (!customers.length) return res.status(404).json({ success: false, message: 'No customers found for this workspace.' });
+
+    res.status(200).json({ success: true, data: customers });
+  } catch (err) {
+    console.error('Error in viewUsersForSpecificOwnerInSpecificWorkspace:', err.message || err);
+    res.status(500).json({ success: false, message: 'Something went wrong. Please try again later.' });
+  }
+}
+
 
 
 

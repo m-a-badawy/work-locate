@@ -25,7 +25,7 @@ export async function createWorkingSpace(req, res) {
   }
 };
 
-export async function viewAllWorkingSpaceDetails(req, res) {
+export async function viewAllWorkingSpaceDetailsForAdminOwnerCustomer(req, res) {
   try {
     const workingSpaces = await workingSpaceModel
       .find()

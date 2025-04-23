@@ -40,7 +40,7 @@ export async function createRoom(req, res) {
     }
 }
 
-export async function viewAllRooms(req, res) {
+export async function viewAllRoomsForSpecificWorkspace(req, res) {
     try {
       const workspace = await workingSpaceModel.findById(req.params.workspaceId);
       if (!workspace) return res.status(404).json({ success: false, message: 'This working space is not available.' });
@@ -206,5 +206,28 @@ export async function deleteRoom(req, res) {
         console.error('Error in deleteRoom:', err.message || err);
         res.status(500).send('Something went wrong. Please try again later.');
     }
+}
+
+export async function viewAllRoomsForAdmin(req, res) {
+  try {
+    const rooms = await roomModel
+      .find()
+      .sort('name')
+      .populate({
+        path: 'workspaceId',
+        select: 'name address location ownerId',
+        populate: {
+          path: 'ownerId',
+          select: 'firstName lastName email -_id'
+        }
+      });
+
+    if (!rooms || rooms.length === 0) return res.status(404).json({ success: false, message: 'No rooms found in the system.' });
+
+    res.status(200).json({ success: true, data: rooms });
+  } catch (err) {
+    console.error('Error in viewAllRoomsForAdmin:', err.message || err);
+    res.status(500).json({ success: false, message: 'Something went wrong. Please try again later.' });
+  }
 }
 
