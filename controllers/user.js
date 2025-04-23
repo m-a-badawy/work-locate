@@ -1,3 +1,4 @@
+import { workingSpaceModel } from '../DB/model/workingSpace.js';
 import { userModel } from '../DB/model/user.js';
 import config  from 'config';
 import bcrypt from 'bcrypt';
