@@ -62,7 +62,7 @@ router.delete(
     deleteRoom
 )
 
-router.delete(
+router.get(
     '/all-admin',
     [isAuth, isAdmin],
     viewAllRoomsForAdmin
