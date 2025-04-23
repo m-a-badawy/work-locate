@@ -263,6 +263,28 @@ export async function viewUsersForSpecificOwnerInSpecificWorkspace(req, res) {
   }
 }
 
+export async function viewAllCustomersForAdmin(req, res) {
+  try {
+    const customers = await userModel.find({ role: 'customer' }, 'firstName lastName email phone isActive isVerified');
 
+    if (!customers.length) return res.status(404).json({ success: false, message: 'No customers found.' });
 
+    res.status(200).json({ success: true, data: customers });
+  } catch (err) {
+    console.error('Error in viewAllCustomersForAdmin:', err.message || err);
+    res.status(500).json({ success: false, message: 'Something went wrong. Please try again later.' });
+  }
+};
 
+export async function viewAllOwnersForAdmin(req, res) {
+  try {
+    const owners = await userModel.find({ role: 'owner' }, 'firstName lastName email phone isActive isVerified');
+
+    if (!owners.length) return res.status(404).json({ success: false, message: 'No owners found.' });
+
+    res.status(200).json({ success: true, data: owners });
+  } catch (err) {
+    console.error('Error in viewAllOwnersForAdmin:', err.message || err);
+    res.status(500).json({ success: false, message: 'Something went wrong. Please try again later.' });
+  }
+};

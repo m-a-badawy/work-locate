@@ -21,6 +21,8 @@ import express from 'express';
 
 import {
     viewUsersForSpecificOwnerInSpecificWorkspace,
+    viewAllCustomersForAdmin,
+    viewAllOwnersForAdmin,
     viewAllUsersForAdmin,
     viewAccountDetails,
     deactivateAccount,
@@ -114,4 +116,16 @@ router.get(
     viewAllUsersForAdmin
 );
 
+
+router.get(
+    '/admin/customers',
+    [isAuth, isAdmin],
+    viewAllCustomersForAdmin
+);
+
+router.get(
+    '/admin/owners',
+    [isAuth, isAdmin],
+    viewAllOwnersForAdmin
+);
 export default router;
