@@ -20,19 +20,18 @@ const router = express.Router();
 
 router.get(
     '/all',
-    isAuth,
     viewAllWorkingSpaceDetailsForAdminOwnerCustomer
 );
 
 router.get(
     '/:workspaceId',
-    [ isAuth , validateObjectID('workspaceId') ],
+    [ validateObjectID('workspaceId') ],
     viewWorkingSpaceDetails
 );
 
 router.get(
     '/:workspaceId',
-    [isAuth , validateObjectID('workspaceId')],
+    [validateObjectID('workspaceId')],
     getRatingAverage
 )
 

@@ -22,25 +22,25 @@ const router = express.Router();
 
 router.get(
     '/:workspaceId/all',
-    [isAuth , validateObjectID('workspaceId')],
+    validateObjectID('workspaceId'),
     viewAllRoomsForSpecificWorkspace
 )
 
 router.get(
     '/:workspaceId/available',
-    [isAuth , validateObjectID('workspaceId')],
+    validateObjectID('workspaceId'),
     viewAvailableRooms
 )
 
 router.get(
     '/:workspaceId/unavailable',
-    [isAuth , validateObjectID('workspaceId')],
+    validateObjectID('workspaceId'),
     viewUnavailableRooms
 )
 
 router.get(
     '/:workspaceId/:roomId/availability',
-    [isAuth , validateObjectID('workspaceId', 'roomId')],
+    validateObjectID('workspaceId', 'roomId'),
     checkAvailability
 )
 
