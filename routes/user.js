@@ -13,7 +13,6 @@ import isOwner from '../middlewares/isOwner.js';
 import isAuth from '../middlewares/isAuth.js';
 import express from 'express';
 
-
 /*
     observation: in this module we don't need to verify the user id because
     we will depends on the token which contain the decoded value of the user
@@ -116,9 +115,8 @@ router.get(
     viewAllUsersForAdmin
 );
 
-
 router.get(
-    '/admin/customers',
+    '/admin/all-customers',
     [isAuth, isAdmin],
     viewAllCustomersForAdmin
 );
