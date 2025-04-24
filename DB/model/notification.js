@@ -17,14 +17,6 @@ const notificationSchema = new mongoose.Schema({
         enum: ['unread', 'read'],
         default: 'unread'
     },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    },
-    updatedAt: {
-        type: Date,
-        default: Date.now
-    },
     customerId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',

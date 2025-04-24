@@ -15,14 +15,6 @@ export const pricingPolicySchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    },
-    updatedAt: {
-        type: Date,
-        default: Date.now
-    },
     workspaceId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Workspace',
