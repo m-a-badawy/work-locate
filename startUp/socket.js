@@ -1,5 +1,5 @@
 import { Server } from "socket.io";
-import config from "./config";
+import config from "config";
 
 let io;
 
