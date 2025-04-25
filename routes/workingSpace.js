@@ -12,11 +12,17 @@ import {
     createWorkingSpace, 
     updateWorkingSpace, 
     deleteWorkingSpace,
+    welcomeWorkLocate,
     getRatingAverage
 } from '../controllers/workingSpace.js';
 
 
 const router = express.Router();
+
+router.get(
+    '/',
+    welcomeWorkLocate
+);
 
 router.get(
     '/all',
