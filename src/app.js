@@ -8,7 +8,6 @@ import routes from '../startUp/routes.js';
 import db from '../startUp/db.js';
 import express from 'express';
 import winston from 'winston';
-import http from 'http';
 
 const app = express();
 
