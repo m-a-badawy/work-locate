@@ -7,11 +7,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/app.js",
-    "seed:users": "node scripts/seedUsers.js",
-    "seed:workspaces": "node scripts/seedWorkspaces.js",
-    "seed:rooms": "node scripts/seedRooms.js",
-    "seed:reservations": "node scripts/seedReservations.js",
-    "seed:reviews": "node scripts/seedReviews.js"
+    "seed:users": "node scripts/create/seedUsers.js",
+    "seed:workspaces": "node scripts/create/seedWorkspaces.js",
+    "seed:rooms": "node scripts/create/seedRooms.js",
+    "seed:reservations": "node scripts/create/seedReservations.js",
+    "seed:reviews": "node scripts/create/seedReviews.js",
+    "seed:updateWorkspace": "node scripts/update/workspaceUpdateDescription.js"
   },
   "engines": {
     "node": "20.17.0"

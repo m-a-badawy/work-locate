@@ -1,7 +1,7 @@
-import { workingSpaceModel } from '../DB/model/workingSpace.js';
-import { roomModel } from '../DB/model/room.js';
+import { workingSpaceModel } from '../../DB/model/workingSpace.js';
+import { roomModel } from '../../DB/model/room.js';
 import { faker } from '@faker-js/faker';
-import db from '../startUp/db.js';
+import db from '../../startUp/db.js';
 import mongoose from 'mongoose';
 
 faker.locale = 'en';

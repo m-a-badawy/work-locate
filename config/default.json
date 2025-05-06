@@ -6,5 +6,9 @@
     },
     "jwtPrivateKey": "JWT_PRIVATE_KEY",
     "db" : "db",
-    "clientURL": "http://localhost:3000"
+    "clientURL": "http://localhost:3000",
+    "clerk":{
+      "secretKey": "",
+      "publishableKey": ""
+    }
 }

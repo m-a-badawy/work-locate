@@ -1,6 +1,6 @@
-import { userModel } from '../DB/model/user.js';
+import { userModel } from '../../DB/model/user.js';
 import { faker } from '@faker-js/faker';
-import db from '../startUp/db.js';
+import db from '../../startUp/db.js';
 import bcrypt from 'bcrypt';
 
 faker.locale = 'en';

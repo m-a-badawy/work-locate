@@ -1,9 +1,9 @@
-import { workingSpaceModel } from '../DB/model/workingSpace.js';
-import { reservationModel } from '../DB/model/reservation.js';
-import { roomModel } from '../DB/model/room.js';
-import { userModel } from '../DB/model/user.js';
+import { workingSpaceModel } from '../../DB/model/workingSpace.js';
+import { reservationModel } from '../../DB/model/reservation.js';
+import { roomModel } from '../../DB/model/room.js';
+import { userModel } from '../../DB/model/user.js';
 import { faker } from '@faker-js/faker';
-import db from '../startUp/db.js';
+import db from '../../startUp/db.js';
 import mongoose from 'mongoose';
 
 export const seedReservations = async () => {
