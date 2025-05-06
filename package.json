@@ -12,7 +12,9 @@
     "seed:rooms": "node scripts/create/seedRooms.js",
     "seed:reservations": "node scripts/create/seedReservations.js",
     "seed:reviews": "node scripts/create/seedReviews.js",
-    "seed:updateWorkspace": "node scripts/update/workspaceUpdateDescription.js"
+    "seed:updateReviews": "node scripts/update/seedReviewUpdateDescription.js",
+    "seed:updateWorkspaces": "node scripts/update/seedWorkspaceUpdateDescription.js.js"
+
   },
   "engines": {
     "node": "20.17.0"
