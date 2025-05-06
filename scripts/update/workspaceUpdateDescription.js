@@ -17,7 +17,7 @@ export const updateWorkspaceDescriptions = async () => {
     }
 
     for (const workspace of workspaces) {
-      const newDescription = `${faker.company.catchPhrase()}. ${faker.company.bsBuzz()} and ${faker.company.bsAdjective()} workspace ideal for professionals.`;
+      const newDescription = `${faker.company.catchPhrase()}. ${faker.company.bs()} workspace ideal for professionals.`;
 
       workspace.description = newDescription;
 
@@ -31,5 +31,4 @@ export const updateWorkspaceDescriptions = async () => {
     console.error('❌ Error during updating descriptions:', err.message);
   }
 };
-
 updateWorkspaceDescriptions();
