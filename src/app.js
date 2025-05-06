@@ -22,8 +22,8 @@ production(app);
 
 const port = process.env.PORT || 3000;
 
-server.listen(port, () => {
+app.listen(port, () => {
   winston.info(`Listening on port ${port}...`);
 });
 
-export default server;
+export default app;
