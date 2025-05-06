@@ -6,7 +6,6 @@ import error from '../middlewares/error.js';
 import reviews from '../routes/review.js';
 import rooms from '../routes/room.js';
 import user from '../routes/user.js';
-import express from 'express';
 /*
 /api/payments
 /api/pricing-policies

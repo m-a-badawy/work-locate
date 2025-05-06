@@ -33,7 +33,6 @@
   },
   "homepage": "https://github.com/m-a-badawy/Work-Locate#readme",
   "dependencies": {
-    "@faker-js/faker": "^9.7.0",
     "bcrypt": "^5.1.1",
     "compression": "^1.7.5",
     "config": "^3.3.12",
