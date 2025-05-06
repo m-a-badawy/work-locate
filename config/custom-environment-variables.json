@@ -5,10 +5,5 @@
         "service": "EMAIL_SERVICE"
     },
     "jwtPrivateKey": "JWT_PRIVATE_KEY",
-    "db": "db",
-    "clientURL": "client_URL",
-    "clerk":{
-        "secretKey": "CLERK_SECRET_KEY",
-        "publishableKey": "CLERK_PUBLISHABLE_KEY"
-      }
+    "db": "db"
 }

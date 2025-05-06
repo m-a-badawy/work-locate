@@ -5,10 +5,5 @@
       "service": "EMAIL_SERVICE"
     },
     "jwtPrivateKey": "JWT_PRIVATE_KEY",
-    "db" : "db",
-    "clientURL": "http://localhost:3000",
-    "clerk":{
-      "secretKey": "",
-      "publishableKey": ""
-    }
+    "db" : "db"
 }

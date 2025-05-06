@@ -1,6 +1,5 @@
 import expireReservationsJob from '../startUp/expireReservationsJob.js';
 import joiValidation from '../startUp/joiValidation.js';
-import { initSocket } from '../startUp/socket.js';
 import configApp from '../startUp/configApp.js';
 import production from '../startUp/prod.js';
 import logging from '../startUp/logging.js';
@@ -15,7 +14,6 @@ const app = express();
 const server = http.createServer(app);
 
 configApp(app);
-initSocket(server);
 joiValidation();
 logging();
 config();
