@@ -1,5 +1,5 @@
 import express from 'express';
-import cor from 'cors';
+import cors from 'cors';
 
 export default function configApp(app) {
   app.use(cor());
