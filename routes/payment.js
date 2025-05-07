@@ -1,5 +1,4 @@
 import paymentValidation from '../utils/Validations/models/payment/paymentValidation.js';
-import checkOwnerAdminOrCustomer from '../middlewares/checkOwnerAdminOrCustomer.js';
 import validationSchema from '../middlewares/validationSchema.js';
 import validateObjectID from '../middlewares/validateObjectID.js';
 import isAdminOrIsOwner from '../middlewares/isAdminOrIsOwner.js';
@@ -33,7 +32,7 @@ router.patch(
 
 router.get(
     '/:paymentId',
-    [isAuth , checkOwnerAdminOrCustomer , validateObjectID('paymentId')],
+    [isAuth , validateObjectID('paymentId')],
     getPaymentDetails
 );
 
