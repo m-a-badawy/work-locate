@@ -10,7 +10,7 @@ import isCustomer from '../middlewares/isCustomer.js';
 import isOwner from '../middlewares/isOwner.js';
 import isAdmin from'../middlewares/isAdmin.js';
 import isAuth from '../middlewares/isAuth.js';
-
+import express from 'express';
 import { 
     getReservationsForCustomer,
     getReservationsForAdmin,
@@ -25,8 +25,6 @@ import {
 } from '../controllers/reservation.js';
 
 const router = express.Router();
-
-import express from 'express';
 
 router.post(
     '/:roomId/reserve', 
