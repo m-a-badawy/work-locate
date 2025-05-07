@@ -24,17 +24,17 @@ router.post(
     processPayment
 );
 
-router.patch(
-    '/refund/:paymentId',
-    [isOwner,validateObjectID('paymentId')],
-    refundPayment
-);
+// router.patch(
+//     '/refund/:paymentId',
+//     [isOwner,validateObjectID('paymentId')],
+//     refundPayment
+// );
 
-router.get(
-    '/:paymentId',
-    [isAuth , validateObjectID('paymentId')],
-    getPaymentDetails
-);
+// router.get(
+//     '/:paymentId',
+//     [isAuth , validateObjectID('paymentId')],
+//     getPaymentDetails
+// );
 
 router.get(
     '/history',
