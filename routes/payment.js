@@ -1,4 +1,4 @@
-import validateCreatePayment from '../utils/Validations/models/payment/paymentValidation.js';
+import paymentValidation from '../utils/Validations/models/payment/paymentValidation.js';
 import validationSchema from '../middlewares/validationSchema.js';
 import validateObjectID from '../middlewares/validateObjectID.js';
 import isAdminOrIsOwner from '../middlewares/isAdminOrIsOwner.js';
@@ -20,7 +20,7 @@ const router = express.Router();
 
 router.post(
     '/:reservationId/process', 
-    [isAuth,validateObjectID('reservationId'),validationSchema(validateCreatePayment)], 
+    [isAuth,validateObjectID('reservationId'),validationSchema(paymentValidation)], 
     processPayment
 );
 
