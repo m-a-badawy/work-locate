@@ -113,7 +113,7 @@ export async function getPaymentHistory(req, res) {
     } catch (err) {
       return res.status(500).json({ message: err.message });
     }
-  };
+};
   
 export async function getAllPaymentsForOwner(req, res) {
     try {
