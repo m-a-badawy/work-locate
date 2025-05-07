@@ -44,7 +44,7 @@ router.get(
 
 router.get(
     '/all/admin',
-    [isAuth , isAdmin].
+    [isAuth , isAdmin],
     getAllPaymentsForAdmin
 );
 
