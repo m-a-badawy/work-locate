@@ -79,21 +79,44 @@ export async function getPaymentDetails(req, res) {
     try {
       const { paymentId } = req.params;
       const user = req.user;
-      
+  
       const payment = await paymentModel.findById(paymentId)
         .populate('customerId', 'firstName lastName')
         .populate('reservationId', 'totalPrice status roomId');
   
-      if (!payment) return res.status(404).json({ message: 'Payment not found' });
+      if (!payment) {
+        return res.status(404).json({ message: 'Payment not found' });
+      }
   
-      const isAuthorized = (payment.customerId.equals(user._id) || ['Admin', 'Owner'].includes(user.role));
-      if (!isAuthorized) return res.status(403).json({ message: 'Unauthorized to view this payment' });
+      const isAuthorized =
+        payment.customerId?._id?.equals(user._id) ||
+        ['Admin', 'Owner'].includes(user.role);
   
-      res.status(200).json({ payment });
+      if (!isAuthorized) {
+        return res.status(403).json({ message: 'Unauthorized to view this payment' });
+      }
+  
+      const customer = {
+        firstName: payment.customerId.firstName,
+        lastName: payment.customerId.lastName,
+      };
+  
+      const response = {
+        _id: payment._id,
+        status: payment.status,
+        method: payment.method,
+        amount: payment.amount,
+        createdAt: payment.createdAt,
+        reservation: payment.reservationId,
+        customer,
+      };
+  
+      return res.status(200).json({ payment: response });
     } catch (err) {
       return res.status(500).json({ message: err.message });
     }
   }
+  
   
   
   
