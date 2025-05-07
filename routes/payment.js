@@ -30,16 +30,17 @@ router.patch(
     refundPayment
 );
 
-router.get(
-    '/:paymentId',
-    [isAuth , validateObjectID('paymentId')],
-    getPaymentDetails
-);
 
 router.get(
     '/history',
     [isAuth],
     getPaymentHistory
+);
+
+router.get(
+    '/:paymentId',
+    [isAuth , validateObjectID('paymentId')],
+    getPaymentDetails
 );
 
 router.get(
