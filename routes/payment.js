@@ -31,11 +31,11 @@ router.patch(
     refundPayment
 );
 
-// router.get(
-//     '/:paymentId',
-//     [isAuth , validateObjectID('paymentId')],
-//     getPaymentDetails
-// );
+router.get(
+    '/:paymentId',
+    [isAuth , validateObjectID('paymentId')],
+    getPaymentDetails
+);
 
 router.get(
     '/history',
