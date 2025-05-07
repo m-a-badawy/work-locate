@@ -26,7 +26,7 @@ router.post(
 
 router.patch(
     '/refund/:paymentId',
-    [isAuth , isOwner,validateObjectID('paymentId')],
+    [isAuth , isOwner , validateObjectID('paymentId')],
     refundPayment
 );
 
