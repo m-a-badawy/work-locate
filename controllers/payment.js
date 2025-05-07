@@ -26,7 +26,7 @@ export const processPayment = async (req, res, next) => {
       reservation.status = 'confirmed';
       await reservation.save();
 
-      const populatedProcess = await reservationModel
+      const populatedProcess = await paymentModel
         .findById(payment._id)
         .populate('roomId', 'name pricePerHour type capacity')
         .populate('customerId', 'firstName lastName -_id'); 
