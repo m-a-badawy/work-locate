@@ -8,6 +8,7 @@ export async function processPayment(req, res) {
     try { 
         const { paymentMethod } = req.body; 
         const { reservationId } = req.params;
+        const customerId = req.user._id;
 
         const reservation = await reservationModel
             .findById(reservationId)
