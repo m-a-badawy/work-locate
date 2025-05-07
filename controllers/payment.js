@@ -15,7 +15,7 @@ export async function processPayment(req, res) {
             .populate('customerId', 'firstName lastName -_id');
 
         if (!reservation) return res.status(404).json({ message: 'Reservation not found' }); 
-        if (!reservation.customerId.equals(req.user._id)) return res.status(403).json({ message: 'Unauthorized to pay for this reservation' }); 
+        if (reservation.customerId.toString() !== customerId.toString()) return res.status(403).json({ message: 'Unauthorized to pay for this reservation' });
 
         const payment = await paymentModel.create({ 
             amount: reservation.totalPrice, 
@@ -66,7 +66,7 @@ export async function getPaymentDetails(req, res) {
         .populate('reservationId', 'totalPrice status roomId');
   
       if (!payment) return res.status(404).json({ message: 'Payment not found' });
-  
+
       const isAuthorized = payment.customerId._id.equals(user._id) || ['Admin', 'Owner'].includes(user.role);
       if (!isAuthorized) return res.status(403).json({ message: 'Unauthorized to view this payment' });
   
