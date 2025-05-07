@@ -28,7 +28,14 @@ export const processPayment = async (req, res, next) => {
 
       const populatedProcess = await paymentModel
         .findById(payment._id)
-        .populate('roomId', 'name pricePerHour type capacity')
+        .populate('reservationId', 'seatsBooked duration')
+        .populate({
+            path: 'reservationId',
+            populate: {
+            path: 'roomId',
+            select: 'name pricePerHour type capacity'
+            }
+        })
         .populate('customerId', 'firstName lastName -_id'); 
   
       res.status(201).json({ populatedProcess });
