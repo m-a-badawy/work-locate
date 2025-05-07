@@ -47,10 +47,7 @@ export const processPayment = async (req, res, next) => {
 export async function refundPayment(req, res) {
     try {
       const { paymentId } = req.params;
-      const payment = await paymentModel
-        .findById(paymentId)
-        .populate('customerId', 'firstName lastName  -_id')
-        .populate('reservationId', 'totalPrice status')
+      const payment = await paymentModel.findById(paymentId)
   
       if (!payment) return res.status(404).json({ message: 'Payment not found' });
   
@@ -58,8 +55,21 @@ export async function refundPayment(req, res) {
   
       payment.paymentStatus = 'failed';
       await payment.save();
+
+      const populatedProcess = await paymentModel
+      .findById(payment._id)
+      .populate('reservationId', 'seatsBooked duration')
+      .populate({
+          path: 'reservationId',
+          populate: {
+          path: 'roomId',
+          select: 'name pricePerHour type capacity'
+          }
+      })
+      .populate('customerId', 'firstName lastName -_id'); 
+
   
-      res.status(200).json({ message: 'Payment refunded successfully', payment });
+      res.status(200).json({ populatedProcess });
     } catch (err) {
       return res.status(500).json({ message: err.message });
     }
