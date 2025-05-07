@@ -4,37 +4,34 @@ import { reservationModel } from '../DB/model/reservation.js';
 import { paymentModel } from '../DB/model/payment.js';
 import { roomModel } from '../DB/model/room.js';
 
-export async function processPayment(req, res) { 
-    try { 
-        const { paymentMethod } = req.body; 
-        const { reservationId } = req.params;
-        const customerId = req.user._id;
-
-        const reservation = await reservationModel
-            .findById(reservationId)
-            .populate('roomId', 'name pricePerHour type capacity')
-            .populate('customerId', 'firstName lastName -_id');
-
-        if (!reservation) return res.status(404).json({ message: 'Reservation not found' }); 
-        if (reservation.customerId.toString() !== customerId.toString()) return res.status(403).json({ message: 'Unauthorized to pay for this reservation' });
-
-        const payment = await paymentModel.create({ 
-            amount: reservation.totalPrice, 
-            paymentMethod, 
-            paymentStatus: 'completed', 
-            transactionDate: new Date(), 
-            customerId: req.user._id, 
-            reservationId, 
-        }); 
-
-        reservation.status = 'confirmed'; 
-        await reservation.save(); 
-
-        res.status(201).json({ payment }); 
-    } catch (error) { 
-        return res.status(500).json({ message: error.message }); 
-    } 
-};
+export const processPayment = async (req, res, next) => {
+    try {
+      const { paymentMethod } = req.body;
+      const { reservationId } = req.params;
+      const customerId = req.user._id;
+  
+      const reservation = await reservationModel.findById(reservationId);
+      if (!reservation) return res.status(404).json({ message: 'Reservation not found' });
+      if (!reservation.customerId.equals(customerId)) return res.status(403).json({ message: 'Unauthorized to pay for this reservation' });
+  
+      const payment = await paymentModel.create({
+        amount: reservation.totalPrice,
+        paymentMethod,
+        paymentStatus: 'completed',
+        transactionDate: new Date(),
+        customerId,
+        reservationId,
+      });
+  
+      reservation.status = 'confirmed';
+      await reservation.save();
+  
+      res.status(201).json({ payment });
+    } catch (err) {
+        return res.status(500).json({ message: err.message });
+    }
+  };
+  
 
 export async function refundPayment(req, res) {
     try {
