@@ -99,25 +99,22 @@ export async function getPaymentHistory(req, res) {
     try {
       const userId = req.user._id;
   
-      const payments = await paymentModel.find({ customerId: userId }).sort({ createdAt: -1 });
-
-        const populatedProcess = await paymentModel
-        .findById(payment._id)
+      const payments = await paymentModel.find({ customerId: userId }).sort({ createdAt: -1 })
         .populate('reservationId', 'seatsBooked duration')
         .populate({
-            path: 'reservationId',
-            populate: {
+          path: 'reservationId',
+          populate: {
             path: 'roomId',
             select: 'name pricePerHour type capacity'
-            }
+          }
         });
-        
-        res.status(200).json({ count: payments.length, populatedProcess });
+  
+      res.status(200).json({ count: payments.length, payments });
     } catch (err) {
       return res.status(500).json({ message: err.message });
     }
-};
-
+  };
+  
 export async function getAllPaymentsForOwner(req, res) {
     try {
         const ownerId = req.user._id;
