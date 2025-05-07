@@ -25,13 +25,17 @@ export const processPayment = async (req, res, next) => {
   
       reservation.status = 'confirmed';
       await reservation.save();
+
+      const populatedProcess = await reservationModel
+        .findById(payment._id)
+        .populate('roomId', 'name pricePerHour type capacity')
+        .populate('customerId', 'firstName lastName -_id'); 
   
-      res.status(201).json({ payment });
+      res.status(201).json({ populatedProcess });
     } catch (err) {
         return res.status(500).json({ message: err.message });
     }
-  };
-  
+};
 
 export async function refundPayment(req, res) {
     try {
@@ -87,7 +91,7 @@ export async function getPaymentHistory(req, res) {
     } catch (err) {
       return res.status(500).json({ message: err.message });
     }
-  };
+};
 
 export async function getAllPaymentsForOwner(req, res) {
     try {
