@@ -81,7 +81,7 @@ export async function getPaymentDetails(req, res) {
       const user = req.user;
       
       const payment = await paymentModel.findById(paymentId)
-        .populate('customerId', 'firstName lastName -_id')
+        .populate('customerId', 'firstName lastName')
         .populate('reservationId', 'totalPrice status roomId');
   
       if (!payment) return res.status(404).json({ message: 'Payment not found' });
