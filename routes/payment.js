@@ -33,7 +33,7 @@ router.patch(
 
 router.get(
     '/:paymentId',
-    [isAuth , validateObjectID('paymentId')],
+    [isAuth , checkOwnerAdminOrCustomer , validateObjectID('paymentId')],
     getPaymentDetails
 );
 

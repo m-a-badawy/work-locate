@@ -86,7 +86,7 @@ export async function getPaymentDetails(req, res) {
   
       if (!payment) return res.status(404).json({ message: 'Payment not found' });
 
-      const isAuthorized = payment.customerId._id.equals(user._id) || ['Admin', 'Owner'].includes(user.role);
+      const isAuthorized = payment.customerId.equals(user._id) || ['Admin', 'Owner'].includes(user.role);
       if (!isAuthorized) return res.status(403).json({ message: 'Unauthorized to view this payment' });
   
       res.status(200).json({ payment });
