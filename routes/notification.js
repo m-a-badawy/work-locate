@@ -13,7 +13,7 @@ import {
     getOwnerNotifications,
     getUnreadNotifications,
     getUnreadNotificationsForAdmin,
-} from '../controllers/notification.controller.js';
+} from '../controllers/notification.js';
 
 const router = express.Router();
 
