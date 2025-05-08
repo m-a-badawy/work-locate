@@ -22,4 +22,4 @@
         }
     }, { timestamps: true });
 
-    export const pricingModel = mongoose.model('Pricing', pricingPolicySchema);
+    export const pricingModel = mongoose.model('PricePolicy', pricingPolicySchema);
