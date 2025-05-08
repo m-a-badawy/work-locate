@@ -1,9 +1,8 @@
 import { reviewModel } from '../../DB/model/review.js'; 
 import { faker } from '@faker-js/faker'; 
 import db from '../../startUp/db.js'; 
-import mongoose from 'mongoose'; 
-
-faker.locale = 'en';  // التأكد من أن اللغة المستخدمة هي الإنجليزية
+import mongoose from 'mongoose';
+faker.locale = 'en';  
 
 export const updateReviewComments = async () => { 
   try { 
