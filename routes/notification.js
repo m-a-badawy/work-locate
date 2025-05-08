@@ -43,7 +43,7 @@ router.get(
 
 router.get(
     '/all/owner', 
-    {isAuth , isOwner}, 
+    {isAuth , isOwner},
     getOwnerNotifications
 );
 
