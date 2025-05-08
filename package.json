@@ -15,7 +15,8 @@
     "seed:Payments": "node scripts/create/seedPayment.js",
     "seed:pricePolicies": "node scripts/create/seedPricePolicy.js",
     "seed:updateReviews": "node scripts/update/seedReviewUpdateDescription.js",
-    "seed:updateWorkspaces": "node scripts/update/seedWorkspaceUpdateDescription.js.js"
+    "seed:updateWorkspaces": "node scripts/update/seedWorkspaceUpdateDescription.js.",
+    "seed:updatePricePolicy": "node scripts/update/seedPricePolicyUpdateDescriptionAndName.js"
   },
   "engines": {
     "node": "20.17.0"
@@ -34,6 +35,7 @@
   },
   "homepage": "https://github.com/m-a-badawy/Work-Locate#readme",
   "dependencies": {
+    "@faker-js/faker": "^9.7.0",
     "bcrypt": "^5.1.1",
     "compression": "^1.7.5",
     "config": "^3.3.12",
