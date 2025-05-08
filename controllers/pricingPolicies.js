@@ -110,6 +110,7 @@ export async function getOwnerPolicies(req, res) {
       const policies = await pricingModel.find()
         .populate({
           path: 'workspaceId',
+          select: 'name',
           match: { ownerId: ownerId },
         });
         
@@ -123,7 +124,7 @@ export async function getOwnerPolicies(req, res) {
 
 export async function getAllSystemPoliciesForAdmin(req, res) {
     try {
-      const policies = await pricingModel.find().populate('workspaceId');
+      const policies = await pricingModel.find().populate('workspaceId','name');
   
       res.status(200).json({ count: policies.length, policies });
     } catch (err) {
