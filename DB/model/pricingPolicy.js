@@ -17,7 +17,7 @@
         },
         workspaceId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Workspace',
+            ref: 'WorkingSpace',
             required: true
         }
     }, { timestamps: true });
