@@ -12,7 +12,7 @@ import {
     sendNotification,
     getOwnerNotifications,
     getUnreadNotifications,
-    getUnreadNotificationsForAdmin,
+    getNotificationsForAdmin,
 } from '../controllers/notification.js';
 
 const router = express.Router();
@@ -38,7 +38,7 @@ router.get(
 router.get(
     '/all/admin',
     [isAuth, isAdmin],
-    getUnreadNotificationsForAdmin
+    getNotificationsForAdmin
 );
 
 router.get(
