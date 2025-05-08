@@ -30,7 +30,6 @@ router.patch(
     refundPayment
 );
 
-
 router.get(
     '/history',
     [isAuth],
