@@ -22,13 +22,13 @@ router.post(
 );
 
 router.put(
-    '/:pricingPoliciesId',
+    '/:pricingPoliciesId/update',
     [isAuth , isAdminOrIsOwner , validationSchema(updatePricingPolicyValidation) , validateObjectID('pricingPoliciesId')],
     updatePolicy
 );
 
 router.delete(
-    '/:pricingPoliciesId',
+    '/:pricingPoliciesId/delete',
     [isAuth , isAdminOrIsOwner , validateObjectID('pricingPoliciesId')],
     deletePolicy
 );
