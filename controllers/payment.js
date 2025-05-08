@@ -36,7 +36,22 @@ export const processPayment = async (req, res, next) => {
             select: 'name pricePerHour type capacity'
             }
         })
-        .populate('customerId', 'firstName lastName -_id'); 
+        .populate('customerId', 'firstName lastName -_id');
+
+        const io = req.io;
+
+        io.to(customerId.toString()).emit("notification", {
+          type: "payment_success",
+          message: `Your payment of $${payment.amount} was successful.`,
+          data: populated,
+        });
+    
+        const ownerId = populated.reservationId.roomId.workingSpaceId.ownerId.toString();
+        io.to(ownerId).emit("notification", {
+          type: "new_payment",
+          message: `New reservation payment received for your workspace.`,
+          data: populated,
+        });
   
       res.status(201).json({ populatedProcess });
     } catch (err) {
@@ -68,6 +83,11 @@ export async function refundPayment(req, res) {
       })
       .populate('customerId', 'firstName lastName -_id'); 
 
+      req.io.to(payment.customerId.toString()).emit("notification", {
+        type: "payment_refunded",
+        message: `Your payment of $${payment.amount} has been refunded.`,
+        data: populated,
+      });
   
       res.status(200).json({ populatedProcess });
     } catch (err) {

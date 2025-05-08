@@ -1,10 +1,9 @@
 import Joi from 'joi';
 
-export default function validateNotification(notification) {
+export default function validatePayment(payment) {
   const schema = Joi.object({
-    content: Joi.string().min(1).max(500).required(),
-    type: Joi.string().valid('reservation', 'promotion', 'system').required(),
+    paymentMethod: Joi.string().valid('credit_card', 'debit_card', 'paypal', 'cash', 'phone wallet').required()
   });
 
-  return schema.validate(notification, { abortEarly: false });
+  return schema.validate(payment, { abortEarly: false });
 }

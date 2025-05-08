@@ -18,8 +18,8 @@ import {
 const router = express.Router();
 
 router.post(
-    ':customerId/send', 
-    [isAuth , isAdminOrIsOwner , validateObjectID('customerId') , validationSchema(notificationValidation)],
+    '/:workspaceId/:customerId/send', 
+    [isAuth , isAdminOrIsOwner , validateObjectID('customerId' , 'workspaceId') , validationSchema(notificationValidation)],
     sendNotification
 );
 
@@ -30,8 +30,8 @@ router.patch(
 );
 
 router.get(
-    '/unread', 
-    [isAuth, isCustomer],
+    '/:workspaceId/unread', 
+    [isAuth, isCustomer, validateObjectID('workspaceId')],
     getUnreadNotifications
 );
 
@@ -42,8 +42,8 @@ router.get(
 );
 
 router.get(
-    '/all/owner', 
-    [isAuth , isOwner],
+    '/:workspaceId/all/owner', 
+    [isAuth , isOwner , validateObjectID('workspaceId')],
     getOwnerNotifications
 );
 

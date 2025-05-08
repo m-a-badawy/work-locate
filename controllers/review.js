@@ -29,6 +29,8 @@ export async function createWorkSpaceReview(req, res) {
       const populatedReview = await reviewModel.findById(review._id)
         .populate('customerId', 'firstName lastName -_id')
         .populate('workspaceId', 'name');
+    
+      req.app.io.emit('newReview', { review: populatedReview });
   
       return res.status(201).json({ success: true, message: 'Review created successfully.', review: populatedReview });
   
@@ -56,6 +58,8 @@ export async function updateWorkSpaceReview(req, res) {
 
         await workingSpaceModel.recalculateAverageRating(updatedReview.workspaceId);
 
+        req.app.io.emit('updateReview', { review: updatedReview });
+
         return res.status(200).json({ success: true, message: 'Review updated successfully.', review: updatedReview });
 
     } catch (error) {
@@ -81,6 +85,8 @@ export async function deleteWorkSpaceReview(req, res) {
       await reviewModel.deleteOne({ _id: review._id });
   
       await workingSpaceModel.recalculateAverageRating(workspaceId);
+
+      req.app.io.emit('deleteReview', { reviewId: review._id, workspaceId });
   
       return res.status(200).json({ success: true, message: 'Review deleted successfully.' });
   
@@ -97,6 +103,8 @@ export async function getReviewsByWorkspace(req, res) {
             .populate('workspaceId', 'name');
 
         if (reviews.length === 0) return res.status(404).json({ success: false, message: 'No reviews found for this workspace.' });
+        
+        req.app.io.emit('fetchReviews', { workspaceId: req.params.workspaceId, reviews });
 
         return res.status(200).json({ success: true, message: 'Reviews fetched successfully.', reviews });
     } catch (error) {

@@ -18,6 +18,8 @@ export async function createWorkingSpace(req, res) {
       .findById(workingSpace._id)
       .populate('ownerId', '-_id firstName lastName');
 
+    req.io.to(req.user._id.toString()).emit('workspaceCreated', populatedWorkingSpace);
+
     res.status(201).json({success: true , populatedWorkingSpace});
   } catch (err) {
     console.error('Error in createWorkingSpace:', err.message || err);
@@ -87,6 +89,8 @@ export async function updateWorkingSpace(req, res) {
       }
   
       res.status(200).json({ success: true, workingSpace });
+
+      req.io.to(workingSpace.ownerId._id.toString()).emit('workspaceUpdated', workingSpace);
       
     } catch (err) {
       console.error('Error in updateWorkingSpace:', err.message || err);
@@ -103,6 +107,10 @@ export async function deleteWorkingSpace(req, res) {
       }
   
       res.status(200).json({ success: true, message: 'The workspace has been deleted.' });
+
+      req.io.to(workingSpace.ownerId.toString()).emit('workspaceDeleted', {
+        workspaceId: req.params.workspaceId
+      });
       
     } catch (err) {
       console.error('Error in deleteWorkingSpace:', err.message || err);

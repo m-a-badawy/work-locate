@@ -21,7 +21,12 @@ const notificationSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
-    }
+    },
+    workspaceId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'WorkingSpace',
+        required: false,
+      }
 }, { timestamps: true });
 
 const notificationModel = mongoose.model('Notification', notificationSchema);

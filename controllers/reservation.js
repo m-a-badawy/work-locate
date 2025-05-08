@@ -33,6 +33,7 @@ export async function createReservation(req, res) {
             .populate('roomId','name pricePerHour type capacity')
             .populate('customerId','-_id firstName lastName');
         
+        req.io.to(room.ownerId.toString()).emit('reservationCreated', populatedReservation);
         
         await room.reserveSeats(reservation.seatsBooked);
         if (room.availableSeats === 0) room.availabilityStatus = 'unavailable';
@@ -61,6 +62,9 @@ export async function approveReservation(req, res) {
         const populatedReservation = await reservationModel.findById(reservation._id)
             .populate('roomId', 'name pricePerHour type capacity')
             .populate('customerId', '-_id firstName lastName');
+
+        
+        req.io.to(reservation.customerId.toString()).emit('reservationApproved', populatedReservation);
 
         return res.status(200).json({ success: true, message: 'Reservation approved.', reservation: populatedReservation });
 
@@ -93,6 +97,9 @@ export async function confirmArrival(req, res) {
         const populatedReservation = await reservationModel.findById(reservation._id)
             .populate('roomId', 'name pricePerHour type capacity')
             .populate('customerId', '-_id firstName lastName');
+
+        
+        req.io.to(reservation.customerId.toString()).emit('arrivalConfirmed', populatedReservation);
 
         return res.status(200).json({ success: true, message: 'Customer arrival confirmed. Timer started.', reservation: populatedReservation });
     } catch (error) {
@@ -133,6 +140,9 @@ export async function completeReservation(req, res) {
             })
             .populate('customerId', 'name email phone');
 
+            req.io.to(reservation.customerId.toString()).emit('reservationCompleted', populatedReservation);
+            req.io.to(room.ownerId.toString()).emit('reservationCompleted', populatedReservation);
+
         return res.status(200).json({ success: true, message: 'Reservation completed successfully.', reservation: populatedReservation });
     } catch (error) {
         return res.status(500).json({ success: false, message: error.message });
@@ -162,6 +172,9 @@ export async function cancelReservation(req, res) {
         const populatedReservation = await reservationModel.findById(reservation._id)
             .populate('roomId', 'name pricePerHour type capacity')
             .populate('customerId', '-_id firstName lastName');
+
+        req.io.to(reservation.customerId.toString()).emit('reservationCancelled', populatedReservation);
+        req.io.to(room.ownerId.toString()).emit('reservationCancelled', populatedReservation);
 
         return res.status(200).json({ success: true, message: 'Reservation cancelled successfully.', reservation: populatedReservation });
     } catch (error) {
