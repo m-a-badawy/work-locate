@@ -22,7 +22,7 @@ export async function createPolicy(req, res) {
 export async function updatePolicy(req, res) {
     try {
   
-      const policy = await pricingModel.findByIdAndUpdate(req.params._id, req.body, { new: true });
+      const policy = await pricingModel.findByIdAndUpdate(req.params.pricingPoliciesId, req.body, { new: true });
   
       if (!policy) return res.status(404).json({ message: 'Policy not found' });
   
@@ -35,7 +35,7 @@ export async function updatePolicy(req, res) {
 export async function deletePolicy(req, res) {
     try {
 
-        const policy = await pricingModel.findByIdAndDelete(req.params._id);
+        const policy = await pricingModel.findByIdAndDelete(req.params.pricingPoliciesId);
         if (!policy) return res.status(404).json({ message: 'Policy not found' });
 
         res.status(200).json({ message: 'Policy deleted successfully' });
