@@ -10,7 +10,9 @@ import {
   updatePolicy,
   deletePolicy,
   applyPolicy,
-  FinancialReports
+  getOwnerPolicies,
+  FinancialReports,
+  getAllSystemPoliciesForAdmin
 } from '../controllers/pricingPolicies.js';
 
 const router = express.Router();
@@ -43,6 +45,18 @@ router.get(
     '/:workspaceId/reports/financial-view',
     [isAuth , isAdminOrIsOwner , validateObjectID('workspaceId')], 
     FinancialReports
+);
+
+router.get(
+    'all/owner',
+    [isAuth, isOwner], 
+    getOwnerPolicies
+);
+
+router.get(
+    'all/admin', 
+    [isAuth, isAdmin], 
+    getAllSystemPoliciesForAdmin
 );
 
 export default router;

@@ -102,6 +102,35 @@ export async function FinancialReports(req, res) {
       res.status(500).json({ message: err.message });
     }
 }
+
+export async function getOwnerPolicies(req, res) {
+    try {
+      const ownerId = req.user._id;
+  
+      const policies = await pricingModel.find()
+        .populate({
+          path: 'workspaceId',
+          match: { ownerId: ownerId },
+        });
+        
+      const ownerPolicies = policies.filter(policy => policy.workspaceId);
+  
+      res.status(200).json({ count: ownerPolicies.length, policies: ownerPolicies });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+}
+
+export async function getAllSystemPoliciesForAdmin(req, res) {
+    try {
+      const policies = await pricingModel.find().populate('workspaceId');
+  
+      res.status(200).json({ count: policies.length, policies });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+}
+  
   
 
 
