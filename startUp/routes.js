@@ -7,7 +7,7 @@ import error from '../middlewares/error.js';
 import payment from '../routes/payment.js';
 import reviews from '../routes/review.js';
 import rooms from '../routes/room.js';
-// import user from '../routes/user.js';
+import user from '../routes/user.js';
 
 export default (app) => {
     app.use('/' , welcomeWorkLocate)
@@ -18,6 +18,6 @@ export default (app) => {
     app.use('/api/payment', payment);
     app.use('/api/review', reviews);   
     app.use('/api/room', rooms);
-    // app.use('/api/auth', user);
+    app.use('/api/auth', user);
     app.use(error);
 };
