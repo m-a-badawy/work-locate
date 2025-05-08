@@ -40,8 +40,8 @@ router.patch(
 );
 
 router.get(
-    '/reports/financial-view',
-    [isAuth , isAdminOrIsOwner ], 
+    '/:workspaceId/reports/financial-view',
+    [isAuth , isAdminOrIsOwner , validateObjectID('workspaceId')], 
     FinancialReports
 );
 

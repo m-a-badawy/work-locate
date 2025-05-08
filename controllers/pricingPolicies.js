@@ -10,10 +10,12 @@ export async function createPolicy(req, res) {
         name,
         description,
         discountPercentage,
-        workspaceId: req.params.workspaceId
+        workspaceId: req.params.workspaceId,
       });
   
-      res.status(201).json({ policy });
+      const populatedPolicy = await policy.populate('workspaceId' , 'name ');
+  
+      res.status(201).json({ policy: populatedPolicy });
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
@@ -21,62 +23,86 @@ export async function createPolicy(req, res) {
 
 export async function updatePolicy(req, res) {
     try {
-  
-      const policy = await pricingModel.findByIdAndUpdate(req.params.pricingPoliciesId, req.body, { new: true });
+      const policy = await pricingModel.findByIdAndUpdate(
+        req.params.pricingPoliciesId,
+        req.body,
+        { new: true }
+      ).populate('workspaceId' , 'name ');
   
       if (!policy) return res.status(404).json({ message: 'Policy not found' });
   
-      res.status(200).json({  policy });
+      res.status(200).json({ policy });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+} 
+
+export async function deletePolicy(req, res) {
+    try {
+      const policy = await pricingModel.findByIdAndDelete(req.params.pricingPoliciesId)
+        .populate('workspaceId' , 'name ');
+  
+      if (!policy) return res.status(404).json({ message: 'Policy not found' });
+  
+      res.status(200).json({ message: 'Policy deleted successfully', policy });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+} 
+
+export async function applyPolicy(req, res) {
+    try {
+      const policy = await pricingModel.findOne({ workspaceId: req.params.workspaceId })
+        .populate('workspaceId' , 'name ');
+  
+      if (!policy) return res.status(404).json({ message: 'Policy not found' });
+  
+      const reservations = await reservationModel.find({ workspaceId: req.params.workspaceId });
+  
+      for (const reservation of reservations) {
+        reservation.totalPrice = reservation.totalPrice * (1 - policy.discountPercentage / 100);
+        await reservation.save();
+      }
+  
+      res.status(200).json({
+        message: 'Policy applied to reservations',
+        policy,
+        affectedReservations: reservations.length
+      });
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
 }
 
-export async function deletePolicy(req, res) {
-    try {
-
-        const policy = await pricingModel.findByIdAndDelete(req.params.pricingPoliciesId);
-        if (!policy) return res.status(404).json({ message: 'Policy not found' });
-
-        res.status(200).json({ message: 'Policy deleted successfully' });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-}
-
-export async function applyPolicy(req, res) {
-  try {
-
-    const policy = await pricingModel.findOne({ workspaceId: req.params.workspaceId });
-    if (!policy) return res.status(404).json({ message: 'Policy not found' });
-
-    const reservations = await reservationModel.find({ workspaceId: req.params.workspaceId  });
-
-    for (const reservation of reservations) {
-      reservation.totalPrice = reservation.totalPrice * (1 - policy.discountPercentage / 100);
-      await reservation.save();
-    }
-
-    res.status(200).json({ message: 'Policy applied to reservations' });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-}
-
-
 export async function FinancialReports(req, res) {
-  try {
+    try {
+      const { workspaceId } = req.params;
+  
+      const payments = await paymentModel
+        .find({ status: 'completed' })
+        .populate({
+          path: 'reservationId',
+          populate: {
+            path: 'roomId',
+            populate: {
+              path: 'workspaceId',
+              model: 'WorkingSpace',
+              select: 'name',
+            },
+          },
+        });
 
-    const payments = await paymentModel.find({ status: 'paid' }).populate('reservationId');
-    
-    const totalRevenue = payments.reduce((sum, p) => sum + p.amount, 0);
-    const totalPayments = payments.length;
-
-    res.status(200).json({ totalRevenue, totalPayments });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
+      const filteredPayments = payments.filter( p => p.reservationId?.roomId?.workspaceId?._id.toString() === workspaceId);
+  
+      const totalRevenue = filteredPayments.reduce((sum, p) => sum + p.amount, 0);
+      const totalPayments = filteredPayments.length;
+  
+      res.status(200).json({ totalRevenue, totalPayments });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
 }
+  
 
 
   
