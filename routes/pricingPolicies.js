@@ -13,13 +13,11 @@ import {
   FinancialReports
 } from '../controllers/pricingPolicies.js';
 
-import { isAuth } from '../middlewares/auth.middleware.js';
-
 const router = express.Router();
 
 router.post(
-    '/create',
-    [isAuth , isAdminOrIsOwner , validationSchema(pricingPolicyValidation)],
+    '/:workspaceId/create',
+    [isAuth , isAdminOrIsOwner , validationSchema(pricingPolicyValidation) , validateObjectID('workspaceId')],
     createPolicy
 );
 
