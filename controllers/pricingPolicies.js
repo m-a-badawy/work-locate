@@ -13,7 +13,7 @@ export async function createPolicy(req, res) {
         workspaceId: req.params.workspaceId,
       });
   
-      const populatedPolicy = await policy.populate('workspaceId , name ');
+      const populatedPolicy = await policy.populate('workspaceId' , 'name');
   
       res.status(201).json({ policy: populatedPolicy });
     } catch (err) {
@@ -27,7 +27,7 @@ export async function updatePolicy(req, res) {
         req.params.pricingPoliciesId,
         req.body,
         { new: true }
-      ).populate('workspaceId , name ');
+      ).populate('workspaceId' , 'name ');
   
       if (!policy) return res.status(404).json({ message: 'Policy not found' });
   
@@ -40,7 +40,7 @@ export async function updatePolicy(req, res) {
 export async function deletePolicy(req, res) {
     try {
       const policy = await pricingModel.findByIdAndDelete(req.params.pricingPoliciesId)
-        .populate('workspaceId , name ');
+        .populate('workspaceId' , 'name ');
   
       if (!policy) return res.status(404).json({ message: 'Policy not found' });
   
@@ -53,7 +53,7 @@ export async function deletePolicy(req, res) {
 export async function applyPolicy(req, res) {
     try {
       const policy = await pricingModel.findOne({ workspaceId: req.params.workspaceId })
-        .populate('workspaceId , name ');
+        .populate('workspaceId' , 'name ');
   
       if (!policy) return res.status(404).json({ message: 'Policy not found' });
   
