@@ -50,13 +50,13 @@ router.get(
 );
 
 router.get(
-    'all/owner',
+    '/all/owner',
     [isAuth, isOwner], 
     getOwnerPolicies
 );
 
 router.get(
-    'all/admin', 
+    '/all/admin', 
     [isAuth, isAdmin], 
     getAllSystemPoliciesForAdmin
 );
