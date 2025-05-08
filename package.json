@@ -12,6 +12,8 @@
     "seed:rooms": "node scripts/create/seedRooms.js",
     "seed:reservations": "node scripts/create/seedReservations.js",
     "seed:reviews": "node scripts/create/seedReviews.js",
+    "seed:Payments": "node scripts/create/seedPayment.js",
+    "seed:pricePolicies": "node scripts/create/seedPricePolicy.js",
     "seed:updateReviews": "node scripts/update/seedReviewUpdateDescription.js",
     "seed:updateWorkspaces": "node scripts/update/seedWorkspaceUpdateDescription.js.js"
   },
