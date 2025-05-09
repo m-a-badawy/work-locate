@@ -25,7 +25,7 @@ router.post(
 
 router.patch(
     '/:notificationId/read',
-    isAuth,
+    [isAuth , validateObjectID('notificationId')],
     markAsRead
 );
 
