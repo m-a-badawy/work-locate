@@ -31,7 +31,7 @@ router.patch(
 
 router.get(
     '/unread',
-    [isAuth, isCustomer ],
+    [isAuth ],
     getUnreadNotifications
 );
 
