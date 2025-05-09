@@ -3,12 +3,14 @@ import { userModel } from '../DB/model/user.js';
 
 export async function createWorkingSpace(req, res) {
   try {
+    const imagePath = req.files?.path;
 
     const user = await userModel.findById(req.user._id);
     if (!user) return res.status(400).json({message: 'This owner is not available.'});
 
     const workingSpace = new workingSpaceModel({
       ...req.body,
+      workspaceImage: imagePath,
       ownerId: req.user._id,
     });
 
@@ -73,28 +75,31 @@ export async function getRatingAverage(req, res) {
 }
 
 export async function updateWorkingSpace(req, res) {
-    try {
-      const updatedData = { ...req.body };
-  
-      const workingSpace = await workingSpaceModel.findByIdAndUpdate(
-        req.params.workspaceId,
-        updatedData,
-        {  new: true , runValidators: true }
-      )
-      .populate('ownerId', 'firstName lastName -_id')
-      .populate('reviews', 'rating comment');
-  
-      if (!workingSpace) return res.status(404).json({ message: 'Workspace not found' });
-  
-      res.status(200).json({ workingSpace });
+  try {
+    const imagePath = req.files?.path;
+    const updatedData = { ...req.body };
 
-      req.io.to(workingSpace.ownerId._id.toString()).emit('workspaceUpdated', workingSpace);
-      
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: 'Something went wrong. Please try again.' });
-    }
-};
+    if (imagePaths) updatedData.workspaceImage = imagePath;
+
+    const workingSpace = await workingSpaceModel.findByIdAndUpdate(
+      req.params.workspaceId,   
+      updatedData,               
+      { new: true, runValidators: true }
+    )
+    .populate('ownerId', 'firstName lastName -_id')  
+    .populate('reviews', 'rating comment');
+
+    if (!workingSpace) return res.status(404).json({ message: 'Workspace not found' });
+
+    res.status(200).json({ workingSpace });
+
+    req.io.to(workingSpace.ownerId._id.toString()).emit('workspaceUpdated', workingSpace);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Something went wrong. Please try again.' });
+  }
+}
 
 export async function deleteWorkingSpace(req, res) {
     try {

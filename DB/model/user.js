@@ -39,6 +39,9 @@ const userSchema = new mongoose.Schema({
         enum: ['customer', 'admin', 'owner'],
         default: 'customer'
     },
+    userImage: {
+        type: String , required: true
+    },
     isActive: {
         type: Boolean,
         default: true

@@ -6,11 +6,13 @@ import resetPasswordValidation from '../utils/Validations/models/user/resetPassw
 import registerValidation from '../utils/Validations/models/user/registrationValidation.js';
 import loggingValidation from '../utils/Validations/models/user/loggingValidation.js';
 import emailVerificationPasswordReset from '../middlewares/email.js';
+import setImageEntityType from '../middlewares/ImagesEntityType.js';
 import validationSchema from '../middlewares/validationSchema.js';
 import resetAuth from "../middlewares/resetAuth.js";
 import isAdmin from '../middlewares/isAdmin.js';
 import isOwner from '../middlewares/isOwner.js';
 import isAuth from '../middlewares/isAuth.js';
+import upload from '../utils/multer.js';
 import express from 'express';
 
 /*
@@ -50,7 +52,7 @@ router.post(
 
 router.post(
     '/register',
-    validationSchema(registerValidation), 
+    [validationSchema(registerValidation) , setImageEntityType('user') , upload.single('userImage')], 
     register,
     emailVerificationPasswordReset
 );
@@ -87,7 +89,7 @@ router.get(
 
 router.put(
     '/update-profile',
-    [isAuth, validationSchema(updateUserProfileValidation)],
+    [isAuth, validationSchema(updateUserProfileValidation) , setImageEntityType('user') , upload.single('userImage')],
     updateProfile
 );
 

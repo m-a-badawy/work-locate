@@ -2,8 +2,10 @@ import updateWorkingSpaceValidation from '../utils/Validations/models/workingSpa
 import workingSpaceValidation from '../utils/Validations/models/workingSpace/workingSpaceValidation.js';
 import validationSchema from '../middlewares/validationSchema.js';
 import validateObjectID from '../middlewares/validateObjectID.js';
+import ImagesEntityType from '../middlewares/ImagesEntityType.js';
 import isOwner from '../middlewares/isOwner.js';
 import isAuth from '../middlewares/isAuth.js';
+import upload from '../utils/multer.js';
 import express from 'express';
 
 import {
@@ -37,13 +39,13 @@ router.get(
 
 router.post(
     '/create',
-    [isAuth, isOwner, validationSchema(workingSpaceValidation)],
+    [isAuth, isOwner, validationSchema(workingSpaceValidation) , ImagesEntityType('workspace') , upload.single('workspaceImage')],
     createWorkingSpace
 );
 
 router.put(
     '/:workspaceId',
-    [isAuth, isOwner, validateObjectID('workspaceId'),validationSchema(updateWorkingSpaceValidation)],
+    [isAuth, isOwner, validateObjectID('workspaceId'),validationSchema(updateWorkingSpaceValidation) , ImagesEntityType('workspace') , upload.single('workspaceImage')],
     updateWorkingSpace
 );
 

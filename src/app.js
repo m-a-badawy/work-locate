@@ -16,7 +16,7 @@ const app = express();
 const server = http.createServer(app);
 const io = initSocket(server);
 
-app.use(attachIo);
+app.use(attachIo(io));
 
 configApp(app);
 joiValidation();

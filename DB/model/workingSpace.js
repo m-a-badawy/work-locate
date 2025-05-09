@@ -1,3 +1,4 @@
+import { required } from 'joi';
 import { reviewModel } from '../../DB/model/review.js';
 import mongoose from 'mongoose';
 
@@ -59,7 +60,10 @@ const workingSpaceSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Review', 
     required: true,
-  }]
+  }],
+  workspaceImage: {
+    type: String , required: true
+  }
 },{timestamps: true});
 
 workingSpaceSchema.statics.recalculateAverageRating = async function (workspaceId) {

@@ -8,13 +8,14 @@ import bcrypt from 'bcrypt';
 export async function register(req, res, next) {
     try {
         const { firstName, lastName, email, phone, password, confirmPassword } = req.body;
+        const { userImage } = req.file?.path;
 
         const existingUser = await userModel.findOne({ email });
         if (existingUser) return res.status(400).json({ message: 'This user is already registered.'});
 
         if (password !== confirmPassword) return res.status(400).send({ message: 'Confirm password field must match the password field.'});
 
-        const user = new userModel({ firstName, lastName, email, phone, password });
+        const user = new userModel({ firstName, lastName, email, phone, password , userImage});
 
         const verificationToken = await user.generateVerificationToken();
 
@@ -33,7 +34,7 @@ export async function register(req, res, next) {
         res.status(200).json({ message: 'Verification link sent to your email.'});
 
         return next();
-    } catch (err) {
+    } catch (error) {
         console.error(error);
         res.status(500).json({ message: err.message });
     }    
@@ -60,7 +61,7 @@ export async function verifyUser(req, res) {
 
         res.status(200).json({ message: 'Email verified successfully. You can now log in.' });
 
-    } catch (err) {
+    } catch (error) {
         console.error(error);
         res.status(500).json({  message: 'Something went wrong. Please try again later.' });
     }
@@ -80,7 +81,7 @@ export async function login(req , res) {
 
         const token = user.generateAuthToken();
         res.status(200).send(token);
-    } catch(err){
+    } catch(error){
         console.error(error);
         res.status(500).json({ message: err.message });
     }
@@ -108,7 +109,7 @@ export async function forgotPassword(req, res, next) {
         res.status(200).json({ message: "'Password reset instructions sent to your email.'" });
         return next();
 
-    } catch (err) {
+    } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Something went wrong, please try again.' });
     }
@@ -132,7 +133,7 @@ export async function verifyResetCode(req, res) {
 
         res.status(200).json({ message: 'Verification successful. Proceed to reset password.' , token });
 
-    } catch (err) {
+    } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Something went wrong. Please try again.' });
     }
@@ -158,7 +159,7 @@ export async function resetPassword(req, res) {
         await user.save();
         res.status(200).json({ message: 'Password reset successfully.' });
 
-    } catch (err) {
+    } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Something went wrong. Please try again.' });
     }
@@ -184,7 +185,7 @@ export async function changePassword(req, res) {
 
         res.status(200).json({ success: true, message: 'Password changed successfully.' });
 
-    } catch (err) {
+    } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Something went wrong. Please try again later.' });
     }
@@ -207,10 +208,11 @@ export async function viewAccountDetails(req, res) {
 export async function updateProfile(req, res) {
     try {
         const { lastName, firstName, email, phone } = req.body;
+        const { userImage } = req.file?.path;
         
         const user = await userModel.findByIdAndUpdate(
             req.user._id,
-            { firstName, lastName, email, phone },
+            { firstName, lastName, email, phone , userImage},
             { new: true }
         )
         .select(' -_id -password -isVerified -verificationToken -verificationTokenExpires -resetCode -resetCodeExpires -deletionScheduledAt -__v -isActive -createdAt -lastLogin');
@@ -233,7 +235,7 @@ export async function deactivateAccount(req, res) {
         await user.save();
 
         res.status(200).json({ deletionScheduledAt : user.deletionScheduledAt});
-    } catch (err) {
+    } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Something went wrong. Please try again later.' });
     }
@@ -245,7 +247,7 @@ export async function viewAllUsersForAdmin(req, res) {
       if (!users.length) return res.status(404).json({ message: 'No users found.' });
   
       res.status(200).json({ users });
-    } catch (err) {
+    } catch (error) {
         console.error(error);
       res.status(500).json({ message: 'Something went wrong. Please try again later.' });
     }
@@ -272,7 +274,7 @@ export async function viewUsersForSpecificOwnerInSpecificWorkspace(req, res) {
     if (!customers.length) return res.status(404).json({ message: 'No customers found for this workspace.' });
 
     res.status(200).json({ success: true, data: customers });
-  } catch (err) {
+  } catch (error) {
     console.error(error);
     res.status(500).json({  message: 'Something went wrong. Please try again later.' });
   }
@@ -285,7 +287,7 @@ export async function viewAllCustomersForAdmin(req, res) {
     if (!customers.length) return res.status(404).json({ message: 'No customers found.' });
 
     res.status(200).json({ customers });
-  } catch (err) {
+  } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Something went wrong. Please try again later.' });
   }
@@ -298,7 +300,7 @@ export async function viewAllOwnersForAdmin(req, res) {
     if (!owners.length) return res.status(404).json({ message: 'No owners found.' });
 
     res.status(200).json({ owners });
-  } catch (err) {
+  } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Something went wrong. Please try again later.' });
   }

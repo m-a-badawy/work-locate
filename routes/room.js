@@ -1,10 +1,12 @@
 import roomValidation from '../utils/Validations/models/room/roomValidation.js';
+import setImageEntityType from '../middlewares/ImagesEntityType.js';
 import validationSchema from '../middlewares/validationSchema.js';
 import validateObjectID from '../middlewares/validateObjectID.js';
 import isAdminOrIsOwner from '../middlewares/isAdminOrIsOwner.js';
 import isAdmin from '../middlewares/isAdmin.js';
 import isOwner from '../middlewares/isOwner.js';
 import isAuth from '../middlewares/isAuth.js';
+import upload from '../utils/multer.js';
 import express from 'express';
 
 import {
@@ -46,13 +48,13 @@ router.get(
 
 router.post(
     '/:workspaceId/create',
-    [isAuth, isOwner, validateObjectID('workspaceId'),validationSchema(roomValidation),],
+    [isAuth, isOwner, validateObjectID('workspaceId'),validationSchema(roomValidation), setImageEntityType('room') , upload.array('roomImages' , 10)],
     createRoom
 )
 
 router.put(
     '/:workspaceId/:roomId',
-    [isAuth, isAdminOrIsOwner , validateObjectID('workspaceId', 'roomId'),validationSchema(roomValidation),],
+    [isAuth, isAdminOrIsOwner , validateObjectID('workspaceId', 'roomId'),validationSchema(roomValidation) , setImageEntityType('room') , upload.array('roomImages' , 10)],
     updateRoomDetails
 )
 

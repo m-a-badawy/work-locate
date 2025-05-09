@@ -8,6 +8,7 @@ export async function createRoom(req, res) {
    
       const roomData = { 
         ...req.body, 
+        roomImages: req.files?.map(file => file.path),
         workspaceId: req.params.workspaceId, 
       }; 
    
@@ -166,7 +167,11 @@ export async function updateRoomDetails(req, res) {
       const workspace = await workingSpaceModel.findById(req.params.workspaceId); 
       if (!workspace) return res.status(400).json({ message: 'This working space is not available.' }); 
    
-      const roomData = { ...req.body, workspaceId: req.params.workspaceId }; 
+      const roomData = {
+        ...req.body, 
+        roomImages: req.files?.map(file => file.path),
+        workspaceId: req.params.workspaceId 
+      }; 
    
       const room = await roomModel.findOneAndUpdate( 
         { _id: req.params.roomId, workspaceId: req.params.workspaceId }, 

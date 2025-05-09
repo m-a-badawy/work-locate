@@ -32,6 +32,9 @@
             default: 'available',
             required: true,
         },
+        roomImages: {
+            type: [String] , required: true
+        },
         type: {
             type: String,
             required: true,
