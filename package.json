@@ -16,7 +16,8 @@
     "seed:pricePolicies": "node scripts/create/seedPricePolicy.js",
     "seed:updateReviews": "node scripts/update/seedReviewUpdateDescription.js",
     "seed:updateWorkspaces": "node scripts/update/seedWorkspaceUpdateDescription.js.",
-    "seed:updatePricePolicy": "node scripts/update/seedPricePolicyUpdateDescriptionAndName.js"
+    "seed:updatePricePolicies": "node scripts/update/seedPricePolicyUpdateDescriptionAndName.js",
+    "seed:notifications": "node scripts/create/seedNotification.js"
   },
   "engines": {
     "node": "20.17.0"
