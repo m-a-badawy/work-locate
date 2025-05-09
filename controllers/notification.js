@@ -16,6 +16,7 @@ export async function sendNotification(req, res) {
 
         res.status(201).json({ notification });
     } catch (error) {
+        console.error(error);
         res.status(500).json({ error: error.message });
     }
 };
@@ -35,6 +36,7 @@ export async function markAsRead(req, res) {
   
       res.status(200).json({ notification });
     } catch (error) {
+      console.error(error);
       res.status(500).json({  error: error.message });
     }
 };
@@ -47,7 +49,8 @@ export async function getUnreadNotifications(req, res) {
       }).sort({ createdAt: -1 });
   
       res.status(200).json({ notifications });
-    } catch (error) {
+    }catch (error) {
+        console.error(error);
         res.status(500).json({  error: error.message });
     }
 };
@@ -70,7 +73,8 @@ export async function getOwnerNotifications(req, res) {
 
     res.status(200).json({ notifications });
   } catch (error) {
-    res.status(500).json({  error: error.message });
+      console.error(error);
+      res.status(500).json({  error: error.message });
   }
 };
 
@@ -82,6 +86,7 @@ export async function getNotificationsForAdmin(req, res) {
   
       res.status(200).json({ notifications });
     } catch (error) {
+      console.error(error);
       res.status(500).json({  error: error.message });
     }
 };

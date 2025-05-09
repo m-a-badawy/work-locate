@@ -25,6 +25,7 @@ export async function createPolicy(req, res) {
   
       res.status(201).json({ populatedPolicy });
     } catch (err) {
+      console.error(err);
       res.status(500).json({ message: err.message });
     }
 }
@@ -48,6 +49,7 @@ export async function updatePolicy(req, res) {
   
       res.status(200).json({ policy });
     } catch (err) {
+      console.error(err);
       res.status(500).json({ message: err.message });
     }
 } 
@@ -66,8 +68,9 @@ export async function deletePolicy(req, res) {
         data: policy,
       });
   
-      res.status(200).json({ message: 'Policy deleted successfully', policy });
+      res.status(200).json({ policy });
     } catch (err) {
+      console.error(err);
       res.status(500).json({ message: err.message });
     }
 } 
@@ -103,11 +106,11 @@ export async function applyPolicy(req, res) {
       }
 
       res.status(200).json({
-        message: 'Policy applied to reservations',
         policy,
         affectedReservations: reservations.length
       });
     } catch (err) {
+      console.error(err);
       res.status(500).json({ message: err.message });
     }
 }
@@ -137,6 +140,7 @@ export async function FinancialReports(req, res) {
   
       res.status(200).json({ totalRevenue, totalPayments });
     } catch (err) {
+      console.error(err);
       res.status(500).json({ message: err.message });
     }
 }
@@ -156,6 +160,7 @@ export async function getOwnerPolicies(req, res) {
   
       res.status(200).json({ count: ownerPolicies.length, policies: ownerPolicies });
     } catch (err) {
+      console.error(err);
       res.status(500).json({ message: err.message });
     }
 }
@@ -166,6 +171,7 @@ export async function getAllSystemPoliciesForAdmin(req, res) {
   
       res.status(200).json({ count: policies.length, policies });
     } catch (err) {
+      console.error(err);
       res.status(500).json({ message: err.message });
     }
 }

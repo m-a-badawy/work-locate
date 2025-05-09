@@ -4,7 +4,7 @@ import { roomModel } from '../DB/model/room.js';
 export async function createRoom(req, res) { 
     try { 
       const workspace = await workingSpaceModel.findById(req.params.workspaceId); 
-      if (!workspace) return res.status(404).json({ success: false, message: 'This working space is not available.' }); 
+      if (!workspace) return res.status(404).json({ message: 'This working space is not available.' }); 
    
       const roomData = { 
         ...req.body, 
@@ -30,22 +30,22 @@ export async function createRoom(req, res) {
         { new: true } 
       ); 
    
-      if (!workspaceUpdate) return res.status(500).json({ success: false, message: 'Failed to update workspace room counter.' }); 
+      if (!workspaceUpdate) return res.status(500).json({ message: 'Failed to update workspace room counter.' }); 
 
       req.io.to(`workspace_${req.params.workspaceId}`).emit('roomCreated', populatedRoom);
    
-      res.status(201).json({ success: true, data: populatedRoom }); 
+      res.status(201).json({ populatedRoom }); 
    
-    } catch (err) { 
-      console.error('Error in createRoom:', err.message || err); 
-      res.status(500).json({ success: false, message: 'Something went wrong. Please try again later.' }); 
+    } catch (error) { 
+      console.error(error);
+      res.status(500).json({ message: 'Something went wrong. Please try again later.' }); 
     } 
 } 
  
 export async function viewAllRoomsForSpecificWorkspace(req, res) { 
     try { 
       const workspace = await workingSpaceModel.findById(req.params.workspaceId); 
-      if (!workspace) return res.status(404).json({ success: false, message: 'This working space is not available.' }); 
+      if (!workspace) return res.status(404).json({ message: 'This working space is not available.' }); 
    
       const rooms = await roomModel 
         .find({ workspaceId: req.params.workspaceId }) 
@@ -59,20 +59,20 @@ export async function viewAllRoomsForSpecificWorkspace(req, res) {
           } 
         }); 
    
-      if (!rooms || rooms.length === 0) return res.status(404).json({ success: false, message: 'No rooms found for this workspace.' }); 
+      if (!rooms || rooms.length === 0) return res.status(404).json({ message: 'No rooms found for this workspace.' }); 
    
-      res.status(200).json({ success: true, data: rooms }); 
+      res.status(200).json({ rooms }); 
    
-    } catch (err) { 
-        console.error('Error in viewAllRooms:', err.message || err); 
-        res.status(500).json({ success: false, message: 'Something went wrong. Please try again later.' }); 
+    } catch (error) { 
+        console.error(error);
+        res.status(500).json({ message: 'Something went wrong. Please try again later.' }); 
     } 
 } 
  
 export async function viewAvailableRooms(req, res) { 
     try { 
       const workspace = await workingSpaceModel.findById(req.params.workspaceId); 
-      if (!workspace) return res.status(404).json({ success: false, message: 'This working space is not available.'}); 
+      if (!workspace) return res.status(404).json({ message: 'This working space is not available.'}); 
    
       const rooms = await roomModel.find({ 
         workspaceId: req.params.workspaceId, 
@@ -88,20 +88,20 @@ export async function viewAvailableRooms(req, res) {
         } 
       }); 
    
-      if (!rooms || rooms.length === 0) return res.status(404).json({ success: false, message: 'No available rooms found.'}); 
+      if (!rooms || rooms.length === 0) return res.status(404).json({ message: 'No available rooms found.'}); 
    
-      res.status(200).json({ success: true, count: rooms.length, data: rooms }); 
+      res.status(200).json({ count: rooms.length, data: rooms }); 
        
-    } catch (err) { 
-      console.error('Error in viewAvailableRooms:', err.message || err); 
-      res.status(500).json({ success: false, message: 'Something went wrong. Please try again later.' }); 
+    } catch (error) { 
+      console.error(error); 
+      res.status(500).json({ message: 'Something went wrong. Please try again later.' }); 
     } 
 } 
  
 export async function viewUnavailableRooms(req, res) { 
     try { 
       const workspace = await workingSpaceModel.findById(req.params.workspaceId); 
-      if (!workspace) return res.status(404).json({ success: false, message: 'This working space is not available.'}); 
+      if (!workspace) return res.status(404).json({ message: 'This working space is not available.'}); 
    
       const rooms = await roomModel.find({ 
         workspaceId: req.params.workspaceId, 
@@ -117,20 +117,20 @@ export async function viewUnavailableRooms(req, res) {
         } 
       }); 
    
-      if (!rooms || rooms.length === 0) return res.status(404).json({ success: false, message: 'No unavailable rooms found.'}); 
+      if (!rooms || rooms.length === 0) return res.status(404).json({ message: 'No unavailable rooms found.'}); 
    
-      res.status(200).json({success: true, count: rooms.length, data: rooms }); 
+      res.status(200).json({ count: rooms.length, data: rooms }); 
    
-    } catch (err) { 
-      console.error('Error in viewUnavailableRooms:', err.message || err); 
-      res.status(500).json({success: false, message: 'Something went wrong. Please try again later.'}); 
+    } catch (error) { 
+      console.error(error);
+      res.status(500).json({ message: 'Something went wrong. Please try again later.'}); 
     } 
 }  
  
 export async function checkAvailability(req, res) { 
     try { 
       const workspace = await workingSpaceModel.findById(req.params.workspaceId); 
-      if (!workspace) return res.status(404).json({ success: false, message: 'This working space is not available.' }); 
+      if (!workspace) return res.status(404).json({ message: 'This working space is not available.' }); 
  
    
       const room = await roomModel.findOne({ 
@@ -145,27 +145,26 @@ export async function checkAvailability(req, res) {
         } 
       }); 
    
-      if (!room) return res.status(404).json({ success: false, message: 'Room not found in this workspace.' }); 
+      if (!room) return res.status(404).json({ message: 'Room not found in this workspace.' }); 
    
       const { name, availabilityStatus, type, capacity, workspaceId } = room; 
       const { name: workspaceName, ownerId } = workspaceId; 
       const { firstName, lastName } = ownerId; 
    
-      res.status(200).json({ 
-        success: true, 
+      res.status(200).json({
         room: { name, availabilityStatus, type, capacity, workspaceName, owner: { firstName, lastName } } 
       }); 
    
-    } catch (err) { 
-      console.error('Error in checkAvailability:', err.message || err); 
-      res.status(500).json({ success: false, message: 'Something went wrong. Please try again later.' }); 
+    } catch (error) { 
+      console.error(error);
+      res.status(500).json({ message: 'Something went wrong. Please try again later.' }); 
     } 
 }   
  
 export async function updateRoomDetails(req, res) { 
     try { 
       const workspace = await workingSpaceModel.findById(req.params.workspaceId); 
-      if (!workspace) return res.status(400).json({ success: false, message: 'This working space is not available.' }); 
+      if (!workspace) return res.status(400).json({ message: 'This working space is not available.' }); 
    
       const roomData = { ...req.body, workspaceId: req.params.workspaceId }; 
    
@@ -179,40 +178,39 @@ export async function updateRoomDetails(req, res) {
         populate: { path: 'ownerId', select: 'firstName lastName -_id' } 
       }); 
    
-      if (!room) return res.status(404).json({ success: false, message: 'Room not found in this workspace.' }); 
+      if (!room) return res.status(404).json({ message: 'Room not found in this workspace.' }); 
 
       req.io.to(`workspace_${req.params.workspaceId}`).emit('roomUpdated', room);
    
-      res.status(200).json({ success: true, data: room }); 
-    } catch (err) { 
-      console.error('Error in updateRoomDetails:', err.message || err); 
-      res.status(500).json({ success: false, message: 'Something went wrong. Please try again later.' }); 
+      res.status(200).json({ room }); 
+    } catch (error) { 
+      console.error(error);
+      res.status(500).json({ message: 'Something went wrong. Please try again later.' }); 
     } 
 } 
  
-export async function deleteRoom(req, res) { 
-    try { 
-        const workspace = await workingSpaceModel.findById(req.params.workspaceId); 
-        if (!workspace) return res.status(400).send('This working space is not available...'); 
- 
-        const room = await roomModel.findOneAndDelete({  
-            _id: req.params.roomId,  
-            workspaceId: req.params.workspaceId  
-        }); 
-        if (!room) return res.status(404).send('Room not found in this workspace.'); 
- 
-        await workingSpaceModel.findByIdAndUpdate(req.params.workspaceId, { 
-            $inc: { roomCounter: -1 } 
-        }, { new: true }); 
+export async function deleteRoom(req, res) {  
+  try {  
+      const workspace = await workingSpaceModel.findById(req.params.workspaceId);  
+      if (!workspace) return res.status(400).json({ message: 'This working space is not available.' });  
 
-        req.io.emit('roomDeleted', { roomId, workspaceId });
- 
-        res.status(200).json({ success: true, message: 'The room has been deleted.' }); 
-    } catch (err) { 
-        console.error('Error in deleteRoom:', err.message || err); 
-        res.status(500).send('Something went wrong. Please try again later.'); 
-    } 
-} 
+      const room = await roomModel.findOneAndDelete({   
+          _id: req.params.roomId,   
+          workspaceId: req.params.workspaceId   
+      });  
+      if (!room) return res.status(404).json({ message: 'Room not found in this workspace.' });  
+
+      await workingSpaceModel.findByIdAndUpdate(req.params.workspaceId, {  
+          $inc: { roomCounter: -1 }  
+      }, { new: true });  
+
+      req.io.emit('roomDeleted', { roomId: req.params.roomId, workspaceId: req.params.workspaceId });  
+      return res.status(200).json({ message: 'The room has been deleted.' });
+  } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Something went wrong. Please try again later.', error: err.message || err });
+  }  
+}
  
 export async function viewAllRoomsForAdmin(req, res) { 
   try { 
@@ -228,11 +226,11 @@ export async function viewAllRoomsForAdmin(req, res) {
         } 
       }); 
  
-    if (!rooms || rooms.length === 0) return res.status(404).json({ success: false, message: 'No rooms found in the system.' }); 
+    if (!rooms || rooms.length === 0) return res.status(404).json({ message: 'No rooms found in the system.' }); 
  
     res.status(200).json({ success: true, data: rooms }); 
-  } catch (err) { 
-    console.error('Error in viewAllRoomsForAdmin:', err.message || err); 
-    res.status(500).json({ success: false, message: 'Something went wrong. Please try again later.' }); 
+  } catch (error) { 
+    console.error(error);
+    res.status(500).json({ message: 'Something went wrong. Please try again later.' }); 
   } 
 } 

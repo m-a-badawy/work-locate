@@ -55,6 +55,7 @@ export const processPayment = async (req, res, next) => {
   
       res.status(201).json({ populatedProcess });
     } catch (err) {
+        console.error(err);
         return res.status(500).json({ message: err.message });
     }
 };
@@ -91,6 +92,7 @@ export async function refundPayment(req, res) {
   
       res.status(200).json({ populatedProcess });
     } catch (err) {
+      console.error(err);
       return res.status(500).json({ message: err.message });
     }
 };  
@@ -133,6 +135,7 @@ export async function getPaymentDetails(req, res) {
   
       return res.status(200).json({ payment: response });
     } catch (err) {
+      console.error(err);
       return res.status(500).json({ message: err.message });
     }
 }
@@ -153,6 +156,7 @@ export async function getPaymentHistory(req, res) {
   
       res.status(200).json({ count: payments.length, payments });
     } catch (err) {
+      console.error(err);
       return res.status(500).json({ message: err.message });
     }
 };
@@ -182,6 +186,7 @@ export async function getAllPaymentsForOwner(req, res) {
 
         res.status(200).json({ count: payments.length, payments });
     } catch (err) {
+        console.error(err);
         return res.status(500).json({ message: err.message });
     }
 };
@@ -195,6 +200,7 @@ export  async function  getAllPaymentsForAdmin(req, res){
 
     res.status(200).json({ count: payments.length, payments });
   } catch (err) {
+    console.error(err);
     return res.status(500).json({message: err.message });
   }
 };
