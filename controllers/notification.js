@@ -41,18 +41,17 @@ export async function markAsRead(req, res) {
   
 export async function getUnreadNotifications(req, res) {
     try {
-        const { workspaceId } = req.params;
-
-        let filter = { customerId: req.user._id, status: 'unread' };
-        if (workspaceId) filter.workspaceId = workspaceId;
-
-        const notifications = await notificationModel.find(filter).sort({ createdAt: -1 });
-        res.status(200).json({ notifications });
+      const notifications = await notificationModel.find({
+        customerId: req.user._id,
+        status: 'unread',
+      }).sort({ createdAt: -1 });
+  
+      res.status(200).json({ notifications });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({  error: error.message });
     }
 };
-
+  
 export async function getOwnerNotifications(req, res) {
   try {
     const { workspaceId } = req.params.workspaceId;
@@ -73,8 +72,7 @@ export async function getOwnerNotifications(req, res) {
   } catch (error) {
     res.status(500).json({  error: error.message });
   }
-}
-
+};
 
 export async function getNotificationsForAdmin(req, res) {
     try {
