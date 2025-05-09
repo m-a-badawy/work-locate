@@ -55,7 +55,7 @@ export async function getUnreadNotifications(req, res) {
 
 export async function getOwnerNotifications(req, res) {
   try {
-    const { workspaceId } = req.params;
+    const { workspaceId } = req.params.workspaceId;
 
     if (!workspaceId) return res.status(400).json({ message: 'workspaceId is required.' });
 

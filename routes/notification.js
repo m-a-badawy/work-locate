@@ -30,8 +30,14 @@ router.patch(
 );
 
 router.get(
-    '/:workspaceId/unread', 
-    [isAuth, isCustomer, validateObjectID('workspaceId')],
+    '/:workspaceId/all/owner', 
+    [isAuth , isOwner , validateObjectID('workspaceId')],
+    getOwnerNotifications
+);
+
+router.get(
+    '/unread', 
+    [isAuth, isCustomer],
     getUnreadNotifications
 );
 
@@ -39,12 +45,6 @@ router.get(
     '/all/admin',
     [isAuth, isAdmin],
     getNotificationsForAdmin
-);
-
-router.get(
-    '/:workspaceId/all/owner', 
-    [isAuth , isOwner , validateObjectID('workspaceId')],
-    getOwnerNotifications
 );
 
 export default router;
