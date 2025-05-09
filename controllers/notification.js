@@ -52,22 +52,31 @@ export async function getUnreadNotifications(req, res) {
     }
 };
 
+import { workingSpaceModel } from '../DB/model/workingSpace.js';
+import { notificationModel } from '../DB/model/notification.js';
+
 export async function getOwnerNotifications(req, res) {
-    try {
-        const { workspaceId } = req.params;
+  try {
+    const { workspaceId } = req.params;
 
-        let filter = { customerId: req.user._id };
-        if (workspaceId) filter.workspaceId = workspaceId;
+    if (!workspaceId) return res.status(400).json({ message: 'workspaceId is required.' });
 
-        const notifications = await notificationModel
-            .find(filter)
-            .sort({ createdAt: -1 });
+    const workspace = await workingSpaceModel.findById(workspaceId);
 
-        res.status(200).json({ notifications });
-    } catch (error) {
-        res.status(500).json({  error: error.message });
-    }
-};
+    if (!workspace) return res.status(404).json({  message: 'Workspace not found.' });
+
+    if (workspace.ownerId.toString() !== req.user._id.toString()) return res.status(403).json({ message: 'Access denied. Not the owner of this workspace.' });
+
+    const notifications = await notificationModel
+      .find({ workspaceId })
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ notifications });
+  } catch (error) {
+    res.status(500).json({  error: error.message });
+  }
+}
+
 
 export async function getNotificationsForAdmin(req, res) {
     try {
