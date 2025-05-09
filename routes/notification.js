@@ -30,15 +30,15 @@ router.patch(
 );
 
 router.get(
-    '/:workspaceId/all/owner', 
-    [isAuth , isOwner , validateObjectID('workspaceId')],
-    getOwnerNotifications
+    '/unread',
+    [isAuth, isCustomer ],
+    getUnreadNotifications
 );
 
 router.get(
-    '/unread', 
-    [isAuth, isCustomer ],
-    getUnreadNotifications
+    '/:workspaceId/all/owner',
+    [isAuth , isOwner , validateObjectID('workspaceId')],
+    getOwnerNotifications
 );
 
 router.get(
