@@ -1,3 +1,4 @@
+import { workingSpaceModel } from '../DB/model/workingSpace.js';
 import { notificationModel } from '../DB/model/notification.js';
 
 export async function sendNotification(req, res) {
